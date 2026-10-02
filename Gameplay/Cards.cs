@@ -1,5 +1,6 @@
 using BaseLib.Abstracts;
 using BaseLib.Utils;
+using MegaCrit.Sts2.Core.CardSelection;
 using ChaosPrototype.Core;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
@@ -24,57 +25,66 @@ public abstract class SignalCard(CardType type, TargetType target) : ChaosCard(1
     public abstract SignalColor SignalColor { get; }
     protected sealed override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
-        var enhanced = await SignalRuntime.Resolve(context, this, play);
+        var strength = await SignalRuntime.Resolve(context, this, play);
         if (CombatManager.Instance.IsOverOrEnding || Owner.Creature.IsDead) return;
         if (TargetType == TargetType.AnyEnemy && (play.Target == null || !play.Target.IsAlive)) return;
-        await Effect(context, play, enhanced);
+        await Effect(context, play, strength);
     }
-    protected abstract Task Effect(PlayerChoiceContext context, CardPlay play, bool enhanced);
+    protected abstract Task Effect(PlayerChoiceContext context, CardPlay play, int strength);
 }
 public sealed class RedSignal() : SignalCard(CardType.Attack, TargetType.AnyEnemy)
 {
     public override SignalColor SignalColor => SignalColor.Red;
     protected override string ArtName => "red";
-    protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(6, ValueProp.Move), new DamageVar("TripleDamage", 12, ValueProp.Move)];
-    public override List<(string, string)> Localization => new CardLoc("红色信号球", "造成 {Damage:diff()} 点伤害。\n三消：改为 {TripleDamage:diff()} 点伤害。");
-    protected override async Task Effect(PlayerChoiceContext context, CardPlay play, bool enhanced) =>
-        await DamageCmd.Attack(DynamicVars[enhanced ? "TripleDamage" : "Damage"].BaseValue).FromCard(this).Targeting(play.Target!).Execute(context);
-    protected override void OnUpgrade() { DynamicVars["Damage"].UpgradeValueBy(3); DynamicVars["TripleDamage"].UpgradeValueBy(6); }
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(6, ValueProp.Move), new DamageVar("DoubleDamage", 9, ValueProp.Move), new DamageVar("TripleDamage", 12, ValueProp.Move)];
+    public override List<(string, string)> Localization => new CardLoc("红色信号球", "造成 {Damage:diff()} 点伤害。\n双消：{DoubleDamage:diff()} 点伤害。\n三消：{TripleDamage:diff()} 点伤害。");
+    protected override async Task Effect(PlayerChoiceContext context, CardPlay play, int strength) =>
+        await DamageCmd.Attack(DynamicVars[strength == 3 ? "TripleDamage" : strength == 2 ? "DoubleDamage" : "Damage"].BaseValue).FromCard(this).Targeting(play.Target!).Execute(context);
+    protected override void OnUpgrade() { DynamicVars["Damage"].UpgradeValueBy(3); DynamicVars["DoubleDamage"].UpgradeValueBy(5); DynamicVars["TripleDamage"].UpgradeValueBy(6); }
 }
 public sealed class YellowSignal() : SignalCard(CardType.Skill, TargetType.Self)
 {
     public override SignalColor SignalColor => SignalColor.Yellow;
     protected override string ArtName => "yellow";
-    protected override IEnumerable<DynamicVar> CanonicalVars => [new BlockVar(5, ValueProp.Move), new BlockVar("TripleBlock", 10, ValueProp.Move)];
-    public override List<(string, string)> Localization => new CardLoc("黄色信号球", "获得 {Block:diff()} 点格挡。\n三消：改为 {TripleBlock:diff()} 点格挡。");
-    protected override async Task Effect(PlayerChoiceContext context, CardPlay play, bool enhanced) =>
-        await CreatureCmd.GainBlock(Owner.Creature, DynamicVars[enhanced ? "TripleBlock" : "Block"].BaseValue, ValueProp.Move, play);
-    protected override void OnUpgrade() { DynamicVars["Block"].UpgradeValueBy(3); DynamicVars["TripleBlock"].UpgradeValueBy(6); }
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new BlockVar(5, ValueProp.Move), new BlockVar("DoubleBlock", 8, ValueProp.Move), new BlockVar("TripleBlock", 10, ValueProp.Move)];
+    public override List<(string, string)> Localization => new CardLoc("黄色信号球", "获得 {Block:diff()} 点格挡。\n双消：{DoubleBlock:diff()} 点格挡。\n三消：{TripleBlock:diff()} 点格挡。");
+    protected override async Task Effect(PlayerChoiceContext context, CardPlay play, int strength) =>
+        await CreatureCmd.GainBlock(Owner.Creature, DynamicVars[strength == 3 ? "TripleBlock" : strength == 2 ? "DoubleBlock" : "Block"].BaseValue, ValueProp.Move, play);
+    protected override void OnUpgrade() { DynamicVars["Block"].UpgradeValueBy(3); DynamicVars["DoubleBlock"].UpgradeValueBy(4); DynamicVars["TripleBlock"].UpgradeValueBy(6); }
 }
 public sealed class BlueSignal() : SignalCard(CardType.Attack, TargetType.AnyEnemy)
 {
     public override SignalColor SignalColor => SignalColor.Blue;
     protected override string ArtName => "blue";
-    protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(3, ValueProp.Move), new DamageVar("TripleDamage", 6, ValueProp.Move)];
-    public override List<(string, string)> Localization => new CardLoc("蓝色信号球", "造成 {Damage:diff()} 点伤害，获得 1 充能。\n三消：改为 {TripleDamage:diff()} 点伤害和 2 充能。");
-    protected override async Task Effect(PlayerChoiceContext context, CardPlay play, bool enhanced)
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(3, ValueProp.Move), new DamageVar("DoubleDamage", 5, ValueProp.Move), new DamageVar("TripleDamage", 6, ValueProp.Move)];
+    public override List<(string, string)> Localization => new CardLoc("蓝色信号球", "造成 {Damage:diff()} 点伤害，获得 1 充能。\n双消：{DoubleDamage:diff()} 点伤害和 1 充能。\n三消：{TripleDamage:diff()} 点伤害和 2 充能。");
+    protected override async Task Effect(PlayerChoiceContext context, CardPlay play, int strength)
     {
-        await DamageCmd.Attack(DynamicVars[enhanced ? "TripleDamage" : "Damage"].BaseValue).FromCard(this).Targeting(play.Target!).Execute(context);
+        await DamageCmd.Attack(DynamicVars[strength == 3 ? "TripleDamage" : strength == 2 ? "DoubleDamage" : "Damage"].BaseValue).FromCard(this).Targeting(play.Target!).Execute(context);
         if (!CombatManager.Instance.IsOverOrEnding && !Owner.Creature.IsDead && Owner.PlayerCombatState is { } state)
-            CustomResources<Charge>.Get(state).ModifyAmount(enhanced ? 2 : 1);
+            CustomResources<Charge>.Get(state).ModifyAmount(strength == 3 ? 2 : 1);
     }
-    protected override void OnUpgrade() { DynamicVars["Damage"].UpgradeValueBy(2); DynamicVars["TripleDamage"].UpgradeValueBy(4); }
+    protected override void OnUpgrade() { DynamicVars["Damage"].UpgradeValueBy(2); DynamicVars["DoubleDamage"].UpgradeValueBy(3); DynamicVars["TripleDamage"].UpgradeValueBy(4); }
 }
 public sealed class SupercomputeCard() : ChaosCard(1, CardType.Skill, CardRarity.Uncommon, TargetType.Self)
 {
     protected override string ArtName => "super";
-    public override List<(string, string)> Localization => new CardLoc("超算", "本场下一张手动打出的信号球获得三消强化。不可叠层；与自然三消重叠仍消耗且只强化一次。");
-    protected override Task OnPlay(PlayerChoiceContext context, CardPlay play)
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new DynamicVar("Cycle", 2)];
+    public override List<(string, string)> Localization => new CardLoc("超算", "可弃置至多 {Cycle:diff()} 张牌，抽取等量的牌。\n本场下一张手动打出的信号球获得三消强化。不可叠层；与自然三消重叠仍消耗且只强化一次。");
+    protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
-        CustomResources<Supercompute>.Get(Owner.PlayerCombatState!).Amount = 1;
-        return Task.CompletedTask;
+        var prefs = new CardSelectorPrefs(CardSelectorPrefs.DiscardSelectionPrompt, 0, DynamicVars["Cycle"].IntValue);
+        var selected = (await CardSelectCmd.FromHandForDiscard(context, Owner, prefs, null, this)).ToArray();
+        if (selected.Length > 0)
+        {
+            await CardCmd.Discard(context, selected);
+            if (CombatManager.Instance.IsOverOrEnding || Owner.Creature.IsDead) return;
+            await CardPileCmd.Draw(context, selected.Length, Owner);
+        }
+        if (!CombatManager.Instance.IsOverOrEnding && !Owner.Creature.IsDead && Owner.PlayerCombatState is { } state)
+            CustomResources<Supercompute>.Get(state).Amount = 1;
     }
-    protected override void OnUpgrade() => EnergyCost.UpgradeBy(-1);
+    protected override void OnUpgrade() => DynamicVars["Cycle"].UpgradeValueBy(1);
 }
 public sealed class Ultimate : ChaosCard
 {

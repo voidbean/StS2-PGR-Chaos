@@ -14,8 +14,15 @@ public static class SignalRules
         for (int start = Math.Max(0, index - 2); start <= index && start + 2 < hand.Count; start++)
             if (Enumerable.Range(start, 3).All(i => color(hand[i]) == color(played)))
                 return Enumerable.Range(start, 3).Where(i => i != index).Select(i => hand[i]).ToArray();
+        for (int start = Math.Max(0, index - 1); start <= index && start + 1 < hand.Count; start++)
+            if (color(hand[start]) == color(played) && color(hand[start + 1]) == color(played))
+                return [hand[start == index ? start + 1 : start]];
         return [];
     }
+
+    // Append within each section; never sort signals by color.
+    public static int HandInsertIndex<T>(IReadOnlyList<T> hand, T incoming, Func<T, SignalColor> color) =>
+        color(incoming) != SignalColor.None ? hand.Count : hand.TakeWhile(c => color(c) == SignalColor.None).Count();
 
     public static bool UnchangedAfterRemoval<T>(IReadOnlyList<T> before, IReadOnlyList<T> after, T played) where T : class
     {

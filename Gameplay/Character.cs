@@ -55,5 +55,5 @@ public sealed class SignalCore : CustomRelicModel
     public override string PackedIconPath => Main.Art("core");
     protected override string PackedIconOutlinePath => Main.Art("core");
     protected override string BigIconPath => Main.Art("core");
-    public override List<(string, string)> Localization => new RelicLoc("信号核心", "手动打出相邻同色三张信号球中的任意一张：弃置另外两张，强化主牌。四连以上选包含主牌的最靠左三张。", "原型组件，外观待定。");
+    public override List<(string, string)> Localization => new RelicLoc("信号核心", "手动打出相邻同色信号球：优先三消，否则双消；弃置其余球，强化主牌。四连以上选包含主牌的最靠左三张。非信号球靠左，信号球靠右，球的顺序不变。", "原型组件，外观待定。");
 }

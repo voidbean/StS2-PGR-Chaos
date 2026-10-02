@@ -18,7 +18,8 @@ for (int n = 1; n <= 8; n++)
         {
             var pair = SignalRules.Auxiliary(hand, hand[i], c => c.Color);
             var start = Enumerable.Range(0, Math.Max(0, n - 2)).FirstOrDefault(s => s <= i && i <= s + 2 && hand[s].Color != SignalColor.None && hand[s].Color == hand[s+1].Color && hand[s].Color == hand[s+2].Color, -1);
-            var expected = start < 0 ? [] : Enumerable.Range(start, 3).Where(k => k != i).Select(k => hand[k]).ToArray();
+            var pairStart = Enumerable.Range(0, Math.Max(0, n - 1)).FirstOrDefault(s => s <= i && i <= s + 1 && hand[s].Color != SignalColor.None && hand[s].Color == hand[s+1].Color, -1);
+            var expected = start < 0 ? (pairStart < 0 ? Array.Empty<Token>() : new[] { hand[pairStart == i ? i + 1 : pairStart] }) : Enumerable.Range(start, 3).Where(k => k != i).Select(k => hand[k]).ToArray();
             Check(pair.Length == expected.Length && pair.Zip(expected).All(p => ReferenceEquals(p.First, p.Second)), "actual mod matching oracle");
         }
     }
@@ -29,15 +30,21 @@ Check(!SignalRules.UnchangedAfterRemoval(new[] { r, a, b }, new[] { b, r }, a), 
 Check(!SignalRules.UnchangedAfterRemoval(new[] { r, a, b }, new[] { r }, a), "snapshot rejects missing auxiliary");
 Check(!SignalRules.UnchangedAfterRemoval(new[] { r, a, b }, new[] { r, b, new Token(SignalColor.None) }, a), "snapshot rejects draw");
 Check(SignalRules.Auxiliary(new[] { r, a, b }, new Token(SignalColor.Red), c => c.Color).Length == 0, "same-color foreign instance rejected");
-foreach (bool natural in new[] { false, true })
+foreach (int natural in new[] { 1, 2, 3 })
 foreach (bool super in new[] { false, true })
 {
     var play = new PlayResolution();
     var first = play.Resolve(natural, super);
-    Check(first == new Resolution(natural || super, natural, super), "natural/super overlap truth table");
-    var replay = play.Resolve(true, true);
-    Check(replay == new Resolution(natural || super, false, false), "replay never consumes new pair/super");
+    Check(first == new Resolution(super ? 3 : natural, natural > 1, super), "natural/super overlap truth table");
+    var replay = play.Resolve(3, true);
+    Check(replay == new Resolution(super ? 3 : natural, false, false), "replay never consumes new pair/super");
 }
+// Every arrival is inserted into its section without changing signal order.
+var arrivals = new[] { new Token(SignalColor.Red), new Token(SignalColor.None), new Token(SignalColor.Blue), new Token(SignalColor.None), new Token(SignalColor.Red) };
+var ordered = new List<Token>();
+foreach (var token in arrivals) ordered.Insert(SignalRules.HandInsertIndex(ordered, token, c => c.Color), token);
+Check(ordered.SequenceEqual(new[] { arrivals[1], arrivals[3], arrivals[0], arrivals[2], arrivals[4] }), "stable functional-left signal-right insertion");
+Check(SignalRules.Auxiliary(ordered, arrivals[0], c => c.Color).Length == 0, "different color still blocks matching");
 var resource = new Charge(); resource.ModifyAmount(4); resource.StartOfTurnReset(null!, null!);
 Check(resource.Amount == 4, "charge retention"); resource.PrepForCombat<Charge>(null!);
 Check(resource.Amount == 0 && !resource.ApplySharedModification, "charge reset/shared-free exclusion");
@@ -51,6 +58,11 @@ Check(yellow.DynamicVars["Block"].BaseValue == 5 && yellow.DynamicVars["TripleBl
 Check(blue.DynamicVars["Damage"].BaseValue == 3 && blue.DynamicVars["TripleDamage"].BaseValue == 6, "blue values");
 Check(ultimate.CanonicalKeywords.Contains(CardKeyword.Retain) && CustomResources<Charge>.CanonicalCost(ultimate) == 3, "ultimate retain/cost");
 Check(new ChaosCharacter().StartingHp == 70 && new SignalCore().Localization.Count == 3, "character and relic constructors");
+Check(red.DynamicVars["DoubleDamage"].BaseValue == 9 && yellow.DynamicVars["DoubleBlock"].BaseValue == 8 && blue.DynamicVars["DoubleDamage"].BaseValue == 5, "double values");
+Check(superCard.DynamicVars["Cycle"].BaseValue == 2, "supercompute selection limit");
+var visualOrder = new CardModel[] { superCard, ultimate, red, blue, yellow };
+Check(MegaCrit.Sts2.Core.Helpers.HandLayoutHelper.GetInsertIndex(visualOrder, new CardModel[] { red, blue }, ultimate) == 0, "functional card displayed before signals");
+Check(MegaCrit.Sts2.Core.Helpers.HandLayoutHelper.GetInsertIndex(visualOrder, new CardModel[] { ultimate, blue }, yellow) == 2, "visual insertion excludes selected or dragged holders");
 // Populate only this test process's model table to exercise the real StartingDeck getter.
 var table = (Dictionary<ModelId, AbstractModel>)AccessTools.Field(typeof(ModelDb), "_contentById").GetValue(null)!;
 var character = new ChaosCharacter(); var relic = new SignalCore();
@@ -59,6 +71,9 @@ foreach (var model in new AbstractModel[] { red, yellow, blue, superCard, ultima
     var id = ModelDb.GetId(model.GetType());
     table[id] = model;
 }
+var upgradedSuper = superCard.ToMutable();
+AccessTools.Method(typeof(SupercomputeCard), "OnUpgrade").Invoke(upgradedSuper, null);
+Check(upgradedSuper.DynamicVars["Cycle"].BaseValue == 3 && upgradedSuper.EnergyCost.Canonical == 1, "upgraded supercompute cycles three but still costs one");
 var deck = character.StartingDeck.ToArray();
 Check(deck.Length == 11 && deck.Count(c => c is RedSignal) == 3 && deck.Count(c => c is YellowSignal) == 3 && deck.Count(c => c is BlueSignal) == 3, "11-card starting deck composition");
 Check(deck.Count(c => c is Ultimate) == 1 && deck.Count(c => c is SupercomputeCard) == 1 && character.StartingRelics.Single() is SignalCore, "starter utility and relic");
@@ -71,6 +86,8 @@ try
     Check(Harmony.GetPatchInfo(typeof(CardPileCmd).GetMethod(nameof(CardPileCmd.AddDuringManualCardPlay))!)!.Owners.Contains("ChaosPrototype"), "capture patch installed");
     Check(Harmony.GetPatchInfo(typeof(CardCmd).GetMethod(nameof(CardCmd.AutoPlay))!)!.Owners.Contains("ChaosPrototype"), "autoplay patch installed");
     Check(Harmony.GetPatchInfo(typeof(CardModel).GetMethod(nameof(CardModel.TryManualPlay))!)!.Owners.Contains("ChaosPrototype"), "queue guard installed");
+    Check(Harmony.GetPatchInfo(typeof(CardPile).GetMethod(nameof(CardPile.AddInternal))!)!.Owners.Contains("ChaosPrototype"), "hand section insertion installed");
+    Check(Harmony.GetPatchInfo(typeof(MegaCrit.Sts2.Core.Nodes.Combat.NPlayerHand).GetMethod("Add")!)!.Owners.Contains("ChaosPrototype"), "visual insertion installed");
     Console.WriteLine("PASS actual Harmony patch installation (not in-game execution)");
 }
 finally { harmony.UnpatchAll("ChaosPrototype"); }

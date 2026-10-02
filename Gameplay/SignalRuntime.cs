@@ -37,23 +37,23 @@ internal static class SignalRuntime
     }
     internal static void Reset() { Snapshots.Clear(); Suppressed.Clear(); Pending.Clear(); }
 
-    internal static async Task<bool> Resolve(PlayerChoiceContext context, SignalCard card, CardPlay play)
+    internal static async Task<int> Resolve(PlayerChoiceContext context, SignalCard card, CardPlay play)
     {
-        if (play.IsAutoPlay) return false;
-        if (!Snapshots.TryGetValue(card, out var snapshot)) return false;
-        if (CombatManager.Instance.IsOverOrEnding || card.Owner.Creature.IsDead) return false;
-        if (card.TargetType == TargetType.AnyEnemy && (play.Target == null || !play.Target.IsAlive)) return false;
+        if (play.IsAutoPlay) return 1;
+        if (!Snapshots.TryGetValue(card, out var snapshot)) return 1;
+        if (CombatManager.Instance.IsOverOrEnding || card.Owner.Creature.IsDead) return 1;
+        if (card.TargetType == TargetType.AnyEnemy && (play.Target == null || !play.Target.IsAlive)) return 1;
         var state = card.Owner.PlayerCombatState!;
-        var natural = HasCore(card.Owner) && snapshot.Pair.Length == 2 &&
+        var natural = HasCore(card.Owner) && snapshot.Pair.Length > 0 &&
             SignalRules.UnchangedAfterRemoval(snapshot.Hand, state.Hand.Cards, card);
         var super = CustomResources<Supercompute>.Get(state);
-        var resolution = snapshot.Resolution.Resolve(natural, super.Amount > 0);
+        var resolution = snapshot.Resolution.Resolve(natural ? snapshot.Pair.Length + 1 : 1, super.Amount > 0);
         // Consume the existing charge before discard hooks can create another one.
         if (resolution.ConsumeSupercompute) super.Amount = 0;
-        if (!resolution.ConsumePair) return resolution.Enhanced;
+        if (!resolution.ConsumePair) return resolution.Strength;
         foreach (var auxiliary in snapshot.Pair) Suppressed.Add(auxiliary);
         try { await CardCmd.Discard(context, snapshot.Pair); }
         finally { foreach (var auxiliary in snapshot.Pair) Suppressed.Remove(auxiliary); }
-        return resolution.Enhanced;
+        return resolution.Strength;
     }
 }

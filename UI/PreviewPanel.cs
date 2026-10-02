@@ -43,13 +43,14 @@ internal static class PreviewPanel
                     hovered = active.Holder.CardModel;
                 if (SignalRuntime.Pending.ContainsKey(player)) { preview.Text = "结算中：暂不接受连续出牌"; return; }
                 if (hovered is not SignalCard signal || hovered.Pile?.Type != PileType.Hand)
-                { preview.Text = "悬停或拖拽信号球查看三消\n浅绿色标记将被弃置的两张"; return; }
+                { preview.Text = "悬停或拖拽信号球查看双消／三消\n浅绿色标记将被弃置的辅牌"; return; }
                 var pair = SignalRuntime.Preview(signal);
-                bool natural = pair.Length == 2;
+                bool natural = pair.Length > 0;
+                string match = pair.Length == 2 ? "三消" : "双消";
                 var indices = pair.Select(c => Array.IndexOf(state.Hand.Cards.ToArray(), c) + 1);
-                preview.Text = natural ? $"自然三消：弃置第 {string.Join("、", indices)} 张" : "未形成自然三消";
-                if (super) preview.Text += natural ? "\n超算重叠：仍消耗，不额外强化" : "\n超算强化：不弃置额外牌";
-                preview.Text += natural || super ? "\n使用卡面“三消”数值" : "\n使用卡面普通数值";
+                preview.Text = natural ? $"自然{match}：弃置第 {string.Join("、", indices)} 张" : "单消：没有相邻同色球";
+                if (super) preview.Text += natural ? "\n消耗超算：按三消数值结算" : "\n超算强化：不弃置额外牌";
+                preview.Text += super || pair.Length == 2 ? "\n使用卡面“三消”数值" : natural ? "\n使用卡面“双消”数值" : "\n使用卡面普通数值";
                 foreach (var card in pair)
                 {
                     var node = hand?.GetCard(card);
