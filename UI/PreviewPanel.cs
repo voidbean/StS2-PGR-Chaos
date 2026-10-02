@@ -48,6 +48,8 @@ internal static class PreviewPanel
                 if (player.Creature.GetPower<MoltenChasePower>() is { } chase) status.Text += $"\n熔金追击：剩余 {chase.Remaining} 次";
                 if (player.Creature.GetPower<OmegaCorePower>() != null) status.Text += "\nΩ 核心：供能中";
                 else if (OathflameRuntime.Omega(player).Burned) status.Text += "\nΩ 核心：已燃尽";
+                if (player.Creature.GetPower<PrayerPower>() is { } prayer) status.Text += $"\n颂歌祷告：{(prayer.FirstColor == ChaosPrototype.Core.SignalColor.None ? "等待首颗球" : prayer.FirstColor switch { ChaosPrototype.Core.SignalColor.Red => "红 → ?", ChaosPrototype.Core.SignalColor.Yellow => "黄 → ?", _ => "蓝 → ?" })}";
+                if (player.Creature.GetPower<GarlandsSeaPower>() is { } sea) status.Text += $"\n伽蓝之海：{sea.Inputs} / 3 次，末尾群伤 {12 + sea.Accumulated}";
                 var hand = NPlayerHand.Instance;
                 CardModel? hovered = hand?.FocusedHolder?.CardModel;
                 if (hand?.InCardPlay == true && AccessTools.Field(typeof(NPlayerHand), "_currentCardPlay").GetValue(hand) is NCardPlay active)

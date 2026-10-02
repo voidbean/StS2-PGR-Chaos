@@ -22,6 +22,9 @@ public sealed class RavenTurnRules
     }
     public int IceBonus => Math.Min(Triples, 2) * 6;
 
+    public static T[] MoveToRight<T>(IReadOnlyList<T> hand, T selected) where T : class =>
+        hand.Any(c => ReferenceEquals(c, selected)) ? hand.Where(c => !ReferenceEquals(c, selected)).Append(selected).ToArray() : hand.ToArray();
+
     public static T[] Gather<T>(IReadOnlyList<T> hand, SignalColor selected, Func<T, SignalColor> color) =>
         hand.Where(c => color(c) != selected).Concat(hand.Where(c => color(c) == selected)).ToArray();
 }

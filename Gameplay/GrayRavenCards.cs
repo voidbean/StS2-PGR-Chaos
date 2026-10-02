@@ -1,20 +1,15 @@
 using BaseLib.Abstracts;
 using BaseLib.Utils;
 using ChaosPrototype.Core;
-using Godot;
-using HarmonyLib;
 using MegaCrit.Sts2.Core.CardSelection;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
-using MegaCrit.Sts2.Core.Context;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
-using MegaCrit.Sts2.Core.Nodes.Cards.Holders;
-using MegaCrit.Sts2.Core.Nodes.Combat;
 using MegaCrit.Sts2.Core.ValueProps;
 
 namespace ChaosPrototype.Gameplay;
@@ -92,20 +87,7 @@ public sealed class GlacialForm() : ChaosCard(1, CardType.Skill, CardRarity.Unco
         if (selected is not SignalCard signal || CombatManager.Instance.IsOverOrEnding || Owner.Creature.IsDead) return;
         var hand = Owner.PlayerCombatState!.Hand;
         var order = RavenTurnRules.Gather(hand.Cards, signal.SignalColor, SignalRuntime.Color);
-        foreach (var card in order) hand.MoveToBottomInternal(card);
-        hand.InvokeContentsChanged();
-        if (LocalContext.IsMe(Owner) && NPlayerHand.Instance is { } node)
-        {
-            // Selection has finished: synchronize live holders with the backend order.
-            var holders = node.CardHolderContainer.GetChildren().OfType<NHandCardHolder>().ToArray();
-            int index = 0;
-            foreach (var card in order)
-            {
-                var holder = holders.FirstOrDefault(h => ReferenceEquals(h.CardModel, card));
-                if (holder != null) node.CardHolderContainer.MoveChild(holder, index++);
-            }
-            AccessTools.Method(typeof(NPlayerHand), "RefreshLayout").Invoke(node, null);
-        }
+        UI.HandOrder.Apply(Owner, order);
     }
 }
 

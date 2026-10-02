@@ -69,7 +69,7 @@ Check(resource.Amount == 4, "charge retention"); resource.PrepForCombat<Charge>(
 Check(resource.Amount == 0 && !resource.ApplySharedModification, "charge reset/shared-free exclusion");
 var assembly = typeof(ChaosCharacter).Assembly;
 Check(new[] { typeof(SwiftAssault), typeof(HyperdimensionalSpace), typeof(CausalConvergence), typeof(TemporalFinality), typeof(RealmTraversal) }.All(t => !t.IsAbstract && typeof(ChaosCard).IsAssignableFrom(t) && assembly.GetTypes().Contains(t)), "hyperreal card models registered in assembly");
-Check(assembly.GetTypes().Count(t => !t.IsAbstract && typeof(SignalCard).IsAssignableFrom(t)) == 9, "nine signal types");
+Check(assembly.GetTypes().Count(t => !t.IsAbstract && typeof(SignalCard).IsAssignableFrom(t)) == 11, "eleven signal types");
 var red = new RedSignal(); var yellow = new YellowSignal(); var blue = new BlueSignal();
 var superCard = new SupercomputeCard(); var ultimate = new Ultimate(); var dodge = new PerfectDodge();
 Check(dodge.Rarity == CardRarity.Basic && dodge.DynamicVars["Block"].BaseValue == 7 && dodge.EnergyCost.Canonical == 1 && !dodge.CanonicalKeywords.Contains(CardKeyword.Exhaust), "starter dodge is one cost seven block and reusable");

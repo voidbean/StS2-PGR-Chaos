@@ -43,11 +43,17 @@ internal static class SignalRuntime
     {
         if (play.IsAutoPlay || !Snapshots.TryGetValue(card, out var snapshot) || snapshot.EffectCompleted) return;
         snapshot.EffectCompleted = true;
-        if (strength != 3 || CombatManager.Instance.IsOverOrEnding || !card.Owner.Creature.IsAlive) return;
-        if (card.Owner.Creature.GetPower<HyperdimensionalPower>() is { } space)
-            await space.AfterTriple(context);
-        if (card.Owner.Creature.GetPower<MoltenChasePower>() is { } chase)
-            await chase.AfterTriple(context);
+        if (CombatManager.Instance.IsOverOrEnding || !card.Owner.Creature.IsAlive) return;
+        card.Owner.Creature.GetPower<GarlandsSeaPower>()?.Record(strength);
+        if (strength == 3)
+        {
+            if (card.Owner.Creature.GetPower<HyperdimensionalPower>() is { } space)
+                await space.AfterTriple(context);
+            if (card.Owner.Creature.GetPower<MoltenChasePower>() is { } chase)
+                await chase.AfterTriple(context);
+        }
+        if (card.Owner.Creature.GetPower<PrayerPower>() is { } prayer)
+            await prayer.AfterSignal(context, card.SignalColor, play);
     }
 
     internal static async Task<int> Resolve(PlayerChoiceContext context, SignalCard card, CardPlay play)
