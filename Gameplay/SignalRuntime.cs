@@ -66,7 +66,7 @@ internal static class SignalRuntime
             snapshot.Counted = true;
         }
         // Consume the existing charge before discard hooks can create another one.
-        if (resolution.ConsumeSupercompute) super.Amount = 0;
+        if (resolution.ConsumeSupercompute) await ResonanceRuntime.ClearSupercompute(card.Owner);
         if (resolution.ConsumePair)
         {
             foreach (var auxiliary in snapshot.Pair) Suppressed.Add(auxiliary);

@@ -79,8 +79,7 @@ public sealed class RealmTraversal() : ChaosCard(0, CardType.Skill, CardRarity.T
     public override List<(string, string)> Localization => new CardLoc("现界穿越", "保留。获得超算。消耗。\n本场下一张手动信号球获得三消效果，超算不可叠层。");
     protected override Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
-        ResonanceRuntime.GainSupercompute(Owner);
-        return Task.CompletedTask;
+        return ResonanceRuntime.GainSupercompute(context, Owner);
     }
 }
 

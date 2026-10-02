@@ -84,7 +84,7 @@ public sealed class SupercomputeCard() : ChaosCard(1, CardType.Skill, CardRarity
             await CardPileCmd.Draw(context, selected.Length, Owner);
         }
         if (!CombatManager.Instance.IsOverOrEnding && !Owner.Creature.IsDead && Owner.PlayerCombatState is { } state)
-            ResonanceRuntime.GainSupercompute(Owner);
+            await ResonanceRuntime.GainSupercompute(context, Owner);
     }
     protected override void OnUpgrade() => DynamicVars["Cycle"].UpgradeValueBy(1);
 }

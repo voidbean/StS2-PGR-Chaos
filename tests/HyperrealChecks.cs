@@ -54,6 +54,21 @@ static class HyperrealChecks
         __result = Task.FromResult<IReadOnlyList<CardPileAddResult>>([]);
         return false;
     }
+    private static bool ApplyPower(PowerModel power, Creature target, decimal amount, ref Task __result)
+    {
+        AccessTools.Property(typeof(PowerModel), "Owner").SetValue(power, target);
+        AccessTools.Property(typeof(PowerModel), "Amount").SetValue(power, (int)amount);
+        ((List<PowerModel>)AccessTools.Field(typeof(Creature), "_powers").GetValue(target)!).Add(power);
+        __result = Task.CompletedTask;
+        return false;
+    }
+    private static bool RemovePower(PowerModel? power, ref Task __result)
+    {
+        if (power != null)
+            ((List<PowerModel>)AccessTools.Field(typeof(Creature), "_powers").GetValue(power.Owner)!).Remove(power);
+        __result = Task.CompletedTask;
+        return false;
+    }
     private static bool RemoveCard(CardModel card, ref Task __result)
     {
         card.Pile!.RemoveInternal(card, true);
@@ -78,7 +93,7 @@ static class HyperrealChecks
         check(cards[4].CanonicalKeywords.ToHashSet().SetEquals([CardKeyword.Retain, CardKeyword.Exhaust]), "traversal retains and exhausts without ethereal cleanup");
         check(cards[1].Localization!.Any(l => l == ("flavor", "你们的时间，由我掌控！")) && cards[3].Localization!.Any(l => l == ("flavor", "在时间的尽头……湮灭吧！")), "selected flavor preserved separately from rules");
         var table = (Dictionary<ModelId, AbstractModel>)AccessTools.Field(typeof(ModelDb), "_contentById").GetValue(null)!;
-        foreach (var model in cards.Cast<AbstractModel>().Concat([new HyperdimensionalPower(), new TemporarySignalsPower()])) table[ModelDb.GetId(model.GetType())] = model;
+        foreach (var model in cards.Cast<AbstractModel>().Concat([new HyperdimensionalPower(), new TemporarySignalsPower(), new SupercomputePower()])) table[ModelDb.GetId(model.GetType())] = model;
         var player = (Player)RuntimeHelpers.GetUninitializedObject(typeof(Player));
         var creature = new Creature(player, 70, 70);
         Field(player, "<Creature>k__BackingField", creature);
@@ -110,11 +125,14 @@ static class HyperrealChecks
         {
             progress.SetValue(CombatManager.Instance, true);
             Patch(AccessTools.PropertyGetter(typeof(CombatManager), "IsOverOrEnding"), nameof(CombatActive));
+            Patch(AccessTools.PropertyGetter(typeof(CombatManager), "IsEnding"), nameof(CombatActive));
             Patch(AccessTools.Method(typeof(AttackCommand), "Execute"), nameof(CaptureAttack));
             Patch(AccessTools.Method(typeof(CreatureCmd), "Damage", [typeof(PlayerChoiceContext), typeof(IEnumerable<Creature>), typeof(decimal), typeof(ValueProp), typeof(Creature)]), nameof(CaptureDamage));
             Patch(AccessTools.Method(typeof(CardPileCmd), "AddGeneratedCardsToCombat"), nameof(CaptureGenerated));
             Patch(AccessTools.Method(typeof(CardSelectCmd), "FromChooseACardScreen"), nameof(ChooseYellow));
             Patch(AccessTools.Method(typeof(CardPileCmd), "RemoveFromCombat", [typeof(CardModel), typeof(bool)]), nameof(RemoveCard));
+            Patch(AccessTools.Method(typeof(PowerCmd), "Apply", [typeof(PlayerChoiceContext), typeof(PowerModel), typeof(Creature), typeof(decimal), typeof(Creature), typeof(CardModel), typeof(bool)]), nameof(ApplyPower));
+            Patch(AccessTools.Method(typeof(PowerCmd), "Remove", [typeof(PowerModel)]), nameof(RemovePower));
             var assault = combat.CreateCard<SwiftAssault>(player);
             foreach (int strength in new[] { 1, 2, 3 })
             {
@@ -143,6 +161,22 @@ static class HyperrealChecks
             var traversal = combat.CreateCard<RealmTraversal>(player);
             await Invoke(traversal, "OnPlay", null, Play(traversal));
             check(CustomResources<Supercompute>.Get(state).Amount == 1 && lightning.Active, "traversal uses shared supercompute and lightning trigger");
+            var buff = creature.GetPower<SupercomputePower>();
+            check(buff is { IsVisible: true, Type: MegaCrit.Sts2.Core.Entities.Powers.PowerType.Buff }, "supercompute gain exposes a visible native buff");
+            await Invoke(traversal, "OnPlay", null, Play(traversal));
+            check(powers.OfType<SupercomputePower>().Count() == 1 && buff!.Amount == 1, "repeated supercompute does not stack buff");
+            await buff!.AfterSideTurnEnd(null!, CombatSide.Player, [creature]);
+            await buff.BeforeSideTurnStart(null!, CombatSide.Player, [creature], combat);
+            check(creature.GetPower<SupercomputePower>() == buff && CustomResources<Supercompute>.Get(state).Amount == 1, "unused supercompute buff survives turns");
+            Capture();
+            async Task<int> Resolve(bool auto = false) => await (Task<int>)AccessTools.Method(runtime, "Resolve").Invoke(null, [null, assault, Play(assault, target, auto)])!;
+            check(await Resolve(true) == 1 && creature.GetPower<SupercomputePower>() == buff, "autoplay preserves supercompute buff");
+            check(await Resolve() == 3 && creature.GetPower<SupercomputePower>() == null && CustomResources<Supercompute>.Get(state).Amount == 0, "manual signal consumes resource and buff together");
+            await Invoke(traversal, "OnPlay", null, Play(traversal));
+            check(await Resolve() == 3 && creature.GetPower<SupercomputePower>() != null && CustomResources<Supercompute>.Get(state).Amount == 1, "replay preserves newly gained supercompute");
+            var resonance = typeof(SignalCard).Assembly.GetType("ChaosPrototype.Gameplay.ResonanceRuntime")!;
+            await (Task)AccessTools.Method(resonance, "ClearSupercompute").Invoke(null, [player])!;
+            check(creature.GetPower<SupercomputePower>() == null && CustomResources<Supercompute>.Get(state).Amount == 0, "debug clear removes resource and buff");
             var ability = combat.CreateCard<HyperdimensionalSpace>(player);
             state.PlayPile.AddInternal(ability, silent: true);
             await Invoke(ability, "OnPlay", null, Play(ability));

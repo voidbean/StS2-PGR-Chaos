@@ -21,6 +21,16 @@ public abstract class ResonancePower : CustomPowerModel
     public override string CustomBigBetaIconPath => Main.Art("core");
 }
 
+public sealed class SupercomputePower : ResonancePower
+{
+    public override string CustomPackedIconPath => Main.Art("super");
+    public override string CustomBigIconPath => Main.Art("super");
+    public override string CustomBigBetaIconPath => Main.Art("super");
+    public override List<(string, string)> Localization => new PowerLoc("超算",
+        "下一张手动打出的信号球获得三消效果。不可叠加，跨回合保留，使用后消失。自动打出的信号球不消耗超算。",
+        "下一张手动打出的信号球获得三消效果。不可叠加，跨回合保留，使用后消失。自动打出的信号球不消耗超算。");
+}
+
 public sealed class PerfectDodgePower : ResonancePower
 {
     public override List<(string, string)> Localization => new PowerLoc("极限闪避", "完整格挡下一段非零攻击伤害后获得超算。下个自己的回合开始时失效。", "完整格挡下一段非零攻击伤害后获得超算。下个自己的回合开始时失效。");
@@ -28,7 +38,7 @@ public sealed class PerfectDodgePower : ResonancePower
     {
         if (target != Owner || !ResonanceRules.PerfectBlock(props.IsPoweredAttack(), result.BlockedDamage, result.UnblockedDamage)) return;
         await PowerCmd.Remove(this);
-        ResonanceRuntime.GainSupercompute(Owner.Player!);
+        await ResonanceRuntime.GainSupercompute(context, Owner.Player!);
     }
     public override async Task BeforeSideTurnStart(PlayerChoiceContext context, CombatSide side, IReadOnlyList<Creature> participants, ICombatState combatState)
     {
@@ -108,11 +118,20 @@ public sealed class TemporarySignalsPower : ResonancePower
 
 internal static class ResonanceRuntime
 {
-    internal static void GainSupercompute(Player player)
+    internal static async Task GainSupercompute(PlayerChoiceContext context, Player player)
     {
         if (player.PlayerCombatState == null || !player.Creature.IsAlive || CombatManager.Instance.IsOverOrEnding) return;
+        if (player.Creature.GetPower<SupercomputePower>() == null)
+            await PowerCmd.Apply<SupercomputePower>(context, player.Creature, 1, player.Creature, null);
         CustomResources<Supercompute>.Get(player.PlayerCombatState).Amount = 1;
         if (player.Creature.GetPower<LightningPower>() is { } lightning) lightning.Active = true;
+    }
+
+    internal static async Task ClearSupercompute(Player player)
+    {
+        if (player.PlayerCombatState != null)
+            CustomResources<Supercompute>.Get(player.PlayerCombatState).Amount = 0;
+        await PowerCmd.Remove(player.Creature.GetPower<SupercomputePower>());
     }
 }
 
