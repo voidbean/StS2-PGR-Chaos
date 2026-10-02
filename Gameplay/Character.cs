@@ -7,7 +7,7 @@ using MegaCrit.Sts2.Core.Models;
 
 namespace ChaosPrototype.Gameplay;
 
-public sealed class ChaosCharacter : PlaceholderCharacterModel
+public sealed partial class ChaosCharacter : PlaceholderCharacterModel
 {
     public override Color NameColor => new("9bd4f5");
     public override CharacterGender Gender => CharacterGender.Neutral;
@@ -22,7 +22,7 @@ public sealed class ChaosCharacter : PlaceholderCharacterModel
     public override RelicPoolModel RelicPool => ModelDb.RelicPool<ChaosRelicPool>();
     public override PotionPoolModel PotionPool => ModelDb.PotionPool<ChaosPotionPool>();
     public override List<(string, string)> Localization => new CharacterLoc(
-        "卡俄斯（原型）", "卡俄斯", "排列红黄蓝信号球，完成相邻三消，积攒充能释放大招。\n外观和数值均为占位。仅用于单人测试。",
+        "卡俄斯（原型）", "卡俄斯", "排列红黄蓝信号球，完成相邻三消，积攒充能释放大招。\n静态立绘原型，数值仍在测试。仅用于单人测试。",
         "他", "他", "他的", "他的", "信号", "轮到你了。", "继续前进。", "信号恢复。", "补充资源。",
         "信号球", "相邻同色三张可三消。");
 }

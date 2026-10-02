@@ -139,7 +139,8 @@ Check(deck.Count(c => c is Ultimate) == 1 && deck.Count(c => c is PerfectDodge) 
 var harmony = new Harmony("ChaosPrototype");
 try
 {
-    ChaosPrototype.Main.Initialize();
+    // Mod settings require native Godot; this console harness only validates patch installation.
+    harmony.PatchAll(typeof(ChaosPrototype.Main).Assembly);
     Check(Harmony.GetPatchInfo(typeof(CardPileCmd).GetMethod(nameof(CardPileCmd.AddDuringManualCardPlay))!)!.Owners.Contains("ChaosPrototype"), "capture patch installed");
     Check(Harmony.GetPatchInfo(typeof(CardCmd).GetMethod(nameof(CardCmd.AutoPlay))!)!.Owners.Contains("ChaosPrototype"), "autoplay patch installed");
     Check(Harmony.GetPatchInfo(typeof(CardModel).GetMethod(nameof(CardModel.TryManualPlay))!)!.Owners.Contains("ChaosPrototype"), "queue guard installed");

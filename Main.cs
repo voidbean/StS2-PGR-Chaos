@@ -9,6 +9,7 @@ public static class Main
 {
     public static void Initialize()
     {
+        UI.CharacterArtConfig.Register();
         new Harmony("ChaosPrototype").PatchAll(Assembly.GetExecutingAssembly());
         UI.PreviewPanel.Register();
     }

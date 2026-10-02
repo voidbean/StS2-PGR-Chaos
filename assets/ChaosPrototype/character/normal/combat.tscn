@@ -1,0 +1,45 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Texture2D" path="res://ChaosPrototype/character/normal/standing.png" id="1"]
+
+[node name="Chaos" type="Node2D"]
+
+[node name="Visuals" type="Sprite2D" parent="."]
+unique_name_in_owner = true
+position = Vector2(-28, -192)
+scale = Vector2(0.25, 0.25)
+texture = ExtResource("1")
+
+[node name="PhobiaModeVisuals" type="Sprite2D" parent="."]
+unique_name_in_owner = true
+visible = false
+position = Vector2(-28, -192)
+scale = Vector2(0.25, 0.25)
+texture = ExtResource("1")
+
+[node name="Bounds" type="Control" parent="."]
+unique_name_in_owner = true
+offset_left = -105.0
+offset_top = -370.0
+offset_right = 105.0
+mouse_filter = 2
+
+[node name="CenterPos" type="Marker2D" parent="."]
+unique_name_in_owner = true
+position = Vector2(0, -180)
+
+[node name="IntentPos" type="Marker2D" parent="."]
+unique_name_in_owner = true
+position = Vector2(0, -410)
+
+[node name="OrbPos" type="Marker2D" parent="."]
+unique_name_in_owner = true
+position = Vector2(-105, -280)
+
+[node name="TalkPos" type="Marker2D" parent="."]
+unique_name_in_owner = true
+position = Vector2(70, -310)
+
+[node name="FormVfx" type="Control" parent="."]
+unique_name_in_owner = true
+mouse_filter = 2
