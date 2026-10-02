@@ -2,9 +2,9 @@
 <PropertyGroup><OutputType>Exe</OutputType><TargetFramework>net9.0</TargetFramework><ImplicitUsings>enable</ImplicitUsings><Nullable>enable</Nullable></PropertyGroup>
 <ItemGroup>
 <ProjectReference Include="../ChaosPrototype.csproj" />
-<Reference Include="sts2"><HintPath>$(HOME)/Library/Application Support/Steam/steamapps/common/Slay the Spire 2/SlayTheSpire2.app/Contents/Resources/data_sts2_macos_x86_64/sts2.dll</HintPath></Reference>
-<Reference Include="GodotSharp"><HintPath>$(HOME)/Library/Application Support/Steam/steamapps/common/Slay the Spire 2/SlayTheSpire2.app/Contents/Resources/data_sts2_macos_x86_64/GodotSharp.dll</HintPath></Reference>
-<Reference Include="0Harmony"><HintPath>$(HOME)/Library/Application Support/Steam/steamapps/common/Slay the Spire 2/SlayTheSpire2.app/Contents/Resources/data_sts2_macos_x86_64/0Harmony.dll</HintPath></Reference>
-<Reference Include="BaseLib"><HintPath>../../BaseLib.dll</HintPath></Reference>
+<Reference Include="sts2"><HintPath>$(Sts2DataDir)/sts2.dll</HintPath></Reference>
+<Reference Include="GodotSharp"><HintPath>$(Sts2DataDir)/GodotSharp.dll</HintPath></Reference>
+<Reference Include="0Harmony"><HintPath>$(Sts2DataDir)/0Harmony.dll</HintPath></Reference>
+<Reference Include="BaseLib"><HintPath>$(BaseLibPath)</HintPath></Reference>
 </ItemGroup>
 </Project>

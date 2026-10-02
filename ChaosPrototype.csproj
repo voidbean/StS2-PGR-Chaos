@@ -2,8 +2,6 @@
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework><ImplicitUsings>enable</ImplicitUsings><Nullable>enable</Nullable>
     <AssemblyName>ChaosPrototype</AssemblyName><Version>0.1.0</Version>
-    <Sts2DataDir Condition="'$(Sts2DataDir)' == ''">$(HOME)/Library/Application Support/Steam/steamapps/common/Slay the Spire 2/SlayTheSpire2.app/Contents/Resources/data_sts2_macos_x86_64</Sts2DataDir>
-    <BaseLibPath Condition="'$(BaseLibPath)' == ''">$(MSBuildThisFileDirectory)../BaseLib.dll</BaseLibPath>
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="tests/**/*.cs" />
