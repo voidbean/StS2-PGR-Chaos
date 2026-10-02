@@ -84,7 +84,7 @@ internal static class DebugPanel
         AddAction(resourceRow, "设为此值", () => { CustomResources<Charge>.Get(player.PlayerCombatState!).Amount = (int)amount.Value; return Task.CompletedTask; });
         AddAction(resourceRow, "能量 +3", () => PlayerCmd.GainEnergy(3, player));
         var superRow = new HBoxContainer(); body.AddChild(superRow);
-        AddAction(superRow, "开启超算", () => { CustomResources<Supercompute>.Get(player.PlayerCombatState!).Amount = 1; return Task.CompletedTask; });
+        AddAction(superRow, "开启超算", () => { ResonanceRuntime.GainSupercompute(player); return Task.CompletedTask; });
         AddAction(superRow, "清除超算", () => { CustomResources<Supercompute>.Get(player.PlayerCombatState!).Amount = 0; return Task.CompletedTask; });
         body.AddChild(notice);
         var stats = new Label { AutowrapMode = TextServer.AutowrapMode.WordSmart, CustomMinimumSize = new Vector2(460, 0) };

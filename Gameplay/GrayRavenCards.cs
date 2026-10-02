@@ -113,7 +113,7 @@ public sealed class GoddessConnection() : ChaosCard(1, CardType.Skill, CardRarit
     public override int MaxUpgradeLevel => 0;
     protected override string ArtName => "core";
     protected override IEnumerable<DynamicVar> CanonicalVars => [new BlockVar(7, ValueProp.Move)];
-    public override List<(string, string)> Localization => new CardLoc("女神连接系统", "仰光 · 技能\n获得 {Block:diff()} 点格挡。本回合下一次自然三消额外获得 7 点格挡。奖励不可叠加；超算单消不触发。");
+    public override List<(string, string)> Localization => new CardLoc("女神连接系统", "仰光 · 技能\n获得 {Block:diff()} 点格挡。本回合下一次三消效果额外获得 7 点格挡。奖励不可叠加；超算强化也可触发。");
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
         await CreatureCmd.GainBlock(Owner.Creature, DynamicVars["Block"].BaseValue, ValueProp.Move, play);
@@ -153,7 +153,7 @@ public sealed class GlacialBloom() : BurstCard(4, CardType.Attack, TargetType.Al
     public override int MaxUpgradeLevel => 0;
     protected override string ArtName => "ultimate";
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(18, ValueProp.Move)];
-    public override List<(string, string)> Localization => new CardLoc("刹那冰华", "鸦羽 · 大招\n保留。消耗 4 充能。对所有敌人造成 {Damage:diff()} 点伤害。本回合每次自然三消增加 6 点基础伤害，最多增加 12。不可自动打出。");
+    public override List<(string, string)> Localization => new CardLoc("刹那冰华", "鸦羽 · 大招\n保留。消耗 4 充能。对所有敌人造成 {Damage:diff()} 点伤害。本回合每次三消效果增加 6 点基础伤害，最多增加 12。不可自动打出。");
     protected override async Task BurstEffect(PlayerChoiceContext context, CardPlay play) =>
         await DamageCmd.Attack(DynamicVars["Damage"].BaseValue + RavenRuntime.Get(Owner).IceBonus).FromCard(this).TargetingAllOpponents(CombatState!).Execute(context);
 }

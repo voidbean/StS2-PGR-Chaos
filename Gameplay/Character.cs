@@ -16,7 +16,7 @@ public sealed class ChaosCharacter : PlaceholderCharacterModel
         ModelDb.Card<RedSignal>(), ModelDb.Card<RedSignal>(), ModelDb.Card<RedSignal>(),
         ModelDb.Card<YellowSignal>(), ModelDb.Card<YellowSignal>(), ModelDb.Card<YellowSignal>(),
         ModelDb.Card<BlueSignal>(), ModelDb.Card<BlueSignal>(), ModelDb.Card<BlueSignal>(),
-        ModelDb.Card<SupercomputeCard>(), ModelDb.Card<Ultimate>()];
+        ModelDb.Card<PerfectDodge>(), ModelDb.Card<Ultimate>()];
     public override IReadOnlyList<RelicModel> StartingRelics => [ModelDb.Relic<SignalCore>()];
     public override CardPoolModel CardPool => ModelDb.CardPool<ChaosCardPool>();
     public override RelicPoolModel RelicPool => ModelDb.RelicPool<ChaosRelicPool>();
@@ -29,8 +29,8 @@ public sealed class ChaosCharacter : PlaceholderCharacterModel
 public sealed class ChaosCardPool : CustomCardPoolModel
 {
     public override string Title => "ChaosPrototype";
-    // Temporary vanilla filler: the shop requires a Power option. Not in the starting deck.
-    protected override CardModel[] GenerateAllCards() => [ModelDb.Card<MegaCrit.Sts2.Core.Models.Cards.Inflame>()];
+    // Custom ability cards now supply the shop Power slot.
+    protected override CardModel[] GenerateAllCards() => [];
     public override Color DeckEntryCardColor => new("9bd4f5");
     public override bool IsColorless => false;
     public override string BigEnergyIconPath => Main.Art("charge");

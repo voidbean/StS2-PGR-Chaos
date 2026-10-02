@@ -48,6 +48,7 @@ foreach (bool super in new[] { false, true })
     var play = new PlayResolution();
     var first = play.Resolve(natural, super);
     Check(first == new Resolution(super ? 3 : natural, natural > 1, super), "natural/super overlap truth table");
+    Check(ResonanceRules.IsTriple(first.Strength) == (super || natural == 3), "all super-enhanced plays qualify for triple synergies");
     var replay = play.Resolve(3, true);
     Check(replay == new Resolution(super ? 3 : natural, false, false), "replay never consumes new pair/super");
 }
@@ -58,13 +59,23 @@ foreach (var token in arrivals) ordered.Insert(SignalRules.HandInsertIndex(order
 Check(ordered.SequenceEqual(new[] { arrivals[1], arrivals[3], arrivals[0], arrivals[2], arrivals[4] }), "stable functional-left signal-right insertion");
 Check(SignalRules.Auxiliary(ordered, arrivals[0], c => c.Color).Length == 0, "different color still blocks matching");
 var resource = new Charge(); resource.ModifyAmount(4); resource.StartOfTurnReset(null!, null!);
+Check(ResonanceRules.PerfectBlock(true, 7, 0), "full block triggers dodge");
+Check(!ResonanceRules.PerfectBlock(true, 7, 3), "partial block cannot trigger dodge");
+Check(!ResonanceRules.PerfectBlock(true, 0, 0), "zero damage cannot trigger dodge");
+Check(!ResonanceRules.PerfectBlock(false, 7, 0), "nonattack damage cannot trigger dodge");
+Check(Enumerable.Range(1, 7).Where(t => ResonanceRules.DeadlineDue(1, t)).SequenceEqual(new[] { 2, 4, 6 }), "deadline starts next turn then supplies every second turn");
+Check(Enumerable.Range(4, 7).Where(t => ResonanceRules.DeadlineDue(4, t)).SequenceEqual(new[] { 5, 7, 9 }), "deadline schedule follows application turn");
 Check(resource.Amount == 4, "charge retention"); resource.PrepForCombat<Charge>(null!);
 Check(resource.Amount == 0 && !resource.ApplySharedModification, "charge reset/shared-free exclusion");
 var assembly = typeof(ChaosCharacter).Assembly;
-Check(assembly.GetTypes().Count(t => !t.IsAbstract && typeof(ChaosCard).IsAssignableFrom(t)) == 14, "fourteen card types");
+Check(assembly.GetTypes().Count(t => !t.IsAbstract && typeof(ChaosCard).IsAssignableFrom(t)) == 18, "eighteen card types");
 Check(assembly.GetTypes().Count(t => !t.IsAbstract && typeof(SignalCard).IsAssignableFrom(t)) == 6, "six signal types");
 var red = new RedSignal(); var yellow = new YellowSignal(); var blue = new BlueSignal();
-var superCard = new SupercomputeCard(); var ultimate = new Ultimate();
+var superCard = new SupercomputeCard(); var ultimate = new Ultimate(); var dodge = new PerfectDodge();
+Check(dodge.Rarity == CardRarity.Basic && dodge.DynamicVars["Block"].BaseValue == 7 && dodge.EnergyCost.Canonical == 1 && !dodge.CanonicalKeywords.Contains(CardKeyword.Exhaust), "starter dodge is one cost seven block and reusable");
+Check(superCard.Rarity == CardRarity.Uncommon && superCard.Localization.Any(l => l.Item2 == "主动超算"), "active supercompute renamed while preserving reward rarity");
+ChaosCard[] abilities = [new DeadlineTimer(), new GloriousAfterglow(), new SupercomputeLightning()];
+Check(abilities.All(c => c.Type == CardType.Power) && abilities[0].Rarity == CardRarity.Rare && abilities[0].EnergyCost.Canonical == 2 && abilities.Skip(1).All(c => c.Rarity == CardRarity.Uncommon && c.EnergyCost.Canonical == 1), "resonance power card rarities and costs");
 ChaosCard[] ravens = [new FrostBlade(), new GlacialForm(), new GlacialBloom(), new RepulsiveBeam(), new GoddessConnection(), new ArcadiaGate(), new RetreatShot(), new TacticalCalculation(), new OrbitalStrike()];
 Check(ravens.Count(c => c.Rarity == CardRarity.Common) == 4 && ravens.Count(c => c.Rarity == CardRarity.Uncommon) == 2 && ravens.Count(c => c.Rarity == CardRarity.Rare) == 3, "new reward rarity distribution includes three distinct rares");
 Check(new ChaosCard[] { red, yellow, blue, ultimate }.All(c => c.Rarity == CardRarity.Basic), "starter-only cards excluded from normal reward rarity rolls");
@@ -75,7 +86,7 @@ Check(ravens.OfType<SignalCard>().All(c => c.EnergyCost.Canonical == 1 && !c.Can
 Check(SignalRules.Auxiliary(new CardModel[] { red, ravens[0], ravens[3] }, ravens[0], c => c is SignalCard signal ? signal.SignalColor : SignalColor.None).Length == 2, "different named red balls combine");
 var turn = new RavenTurnRules(); turn.EnterTurn(1); turn.ArmConnection(); turn.ArmConnection();
 Check(turn.RecordTriple() == 7 && !turn.ConnectionReady && turn.IceBonus == 6, "connection arms once without stacking");
-Check(turn.RecordTriple() == 0 && turn.IceBonus == 12, "connection consumed by first natural triple");
+Check(turn.RecordTriple() == 0 && turn.IceBonus == 12, "connection consumed by first triple");
 turn.RecordTriple(); Check(turn.IceBonus == 12 && turn.Triples == 3, "ice bonus capped after two triples");
 turn.ArmConnection(); turn.EnterTurn(1); Check(turn.ConnectionReady && turn.Triples == 3, "same turn reads preserve state");
 turn.EnterTurn(2); Check(!turn.ConnectionReady && turn.Triples == 0 && turn.IceBonus == 0, "new turn expires bonus and connection");
@@ -95,17 +106,34 @@ Check(MegaCrit.Sts2.Core.Helpers.HandLayoutHelper.GetInsertIndex(visualOrder, ne
 // Populate only this test process's model table to exercise the real StartingDeck getter.
 var table = (Dictionary<ModelId, AbstractModel>)AccessTools.Field(typeof(ModelDb), "_contentById").GetValue(null)!;
 var character = new ChaosCharacter(); var relic = new SignalCore();
-foreach (var model in new AbstractModel[] { red, yellow, blue, superCard, ultimate, character, relic })
+foreach (var model in new AbstractModel[] { red, yellow, blue, superCard, ultimate, dodge, character, relic, new AfterglowPower(), new LightningPower(), new PerfectDodgePower(), new DeadlinePower() })
 {
     var id = ModelDb.GetId(model.GetType());
     table[id] = model;
 }
 var upgradedSuper = superCard.ToMutable();
+// Exercise actual damage and turn-end hooks without loading a Godot scene.
+var ownerCreature = new MegaCrit.Sts2.Core.Entities.Creatures.Creature(null!, 70, 70);
+var enemyCreature = new MegaCrit.Sts2.Core.Entities.Creatures.Creature(null!, 20, 20);
+AccessTools.Field(enemyCreature.GetType(), "<Side>k__BackingField").SetValue(enemyCreature, MegaCrit.Sts2.Core.Combat.CombatSide.Enemy);
+var glowPower = (AfterglowPower)ModelDb.Power<AfterglowPower>().ToMutable();
+var lightningPower = (LightningPower)ModelDb.Power<LightningPower>().ToMutable();
+foreach (var power in new PowerModel[] { glowPower, lightningPower }) AccessTools.Property(typeof(PowerModel), "Owner").SetValue(power, ownerCreature);
+AccessTools.Property(typeof(AfterglowPower), "Active").SetValue(glowPower, true);
+AccessTools.Property(typeof(LightningPower), "Active").SetValue(lightningPower, true);
+Check(glowPower.ModifyDamageMultiplicative(enemyCreature, 10, MegaCrit.Sts2.Core.ValueProps.ValueProp.Move, ownerCreature, red) == 1.3m, "afterglow multiplies owner's attacks by 30 percent");
+Check(glowPower.ModifyDamageMultiplicative(enemyCreature, 10, MegaCrit.Sts2.Core.ValueProps.ValueProp.Unpowered, ownerCreature, null) == 1m, "afterglow excludes nonattack damage");
+Check(lightningPower.ModifyDamageMultiplicative(enemyCreature, 10, MegaCrit.Sts2.Core.ValueProps.ValueProp.Move, ownerCreature, red) == 1.1m && lightningPower.ModifyDamageMultiplicative(ownerCreature, 10, MegaCrit.Sts2.Core.ValueProps.ValueProp.Move, enemyCreature, null) == 1m, "lightning increases enemy incoming damage only");
+await lightningPower.AfterSideTurnEnd(null!, MegaCrit.Sts2.Core.Combat.CombatSide.Enemy, [enemyCreature]);
+Check(lightningPower.Active, "enemy-turn lightning survives to player's next turn");
+await lightningPower.AfterSideTurnEnd(null!, MegaCrit.Sts2.Core.Combat.CombatSide.Player, [ownerCreature]);
+await glowPower.AfterSideTurnEnd(null!, MegaCrit.Sts2.Core.Combat.CombatSide.Player, [ownerCreature]);
+Check(!lightningPower.Active && !glowPower.Active, "damage bonuses expire at owner's turn end");
 AccessTools.Method(typeof(SupercomputeCard), "OnUpgrade").Invoke(upgradedSuper, null);
 Check(upgradedSuper.DynamicVars["Cycle"].BaseValue == 3 && upgradedSuper.EnergyCost.Canonical == 1, "upgraded supercompute cycles three but still costs one");
 var deck = character.StartingDeck.ToArray();
 Check(deck.Length == 11 && deck.Count(c => c is RedSignal) == 3 && deck.Count(c => c is YellowSignal) == 3 && deck.Count(c => c is BlueSignal) == 3, "11-card starting deck composition");
-Check(deck.Count(c => c is Ultimate) == 1 && deck.Count(c => c is SupercomputeCard) == 1 && character.StartingRelics.Single() is SignalCore, "starter utility and relic");
+Check(deck.Count(c => c is Ultimate) == 1 && deck.Count(c => c is PerfectDodge) == 1 && !deck.Any(c => c is SupercomputeCard) && character.StartingRelics.Single() is SignalCore, "starter utility and relic");
 // Apply real Harmony patches to the actual installed assembly without executing a combat.
 // This catches bad overloads, target methods and injected parameter signatures.
 var harmony = new Harmony("ChaosPrototype");

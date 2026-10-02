@@ -29,6 +29,7 @@ public abstract class SignalCard(CardType type, TargetType target, CardRarity ra
         if (CombatManager.Instance.IsOverOrEnding || Owner.Creature.IsDead) return;
         if (TargetType == TargetType.AnyEnemy && (play.Target == null || !play.Target.IsAlive)) return;
         await Effect(context, play, strength);
+        if (strength == 3 && Owner.Creature.GetPower<AfterglowPower>() is { } glow) glow.Active = true;
     }
     protected abstract Task Effect(PlayerChoiceContext context, CardPlay play, int strength);
 }
@@ -70,7 +71,7 @@ public sealed class SupercomputeCard() : ChaosCard(1, CardType.Skill, CardRarity
 {
     protected override string ArtName => "super";
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DynamicVar("Cycle", 2)];
-    public override List<(string, string)> Localization => new CardLoc("超算", "可弃置至多 {Cycle:diff()} 张牌，抽取等量的牌。\n本场下一张手动打出的信号球获得三消强化。不可叠层；与自然三消重叠仍消耗且只强化一次。");
+    public override List<(string, string)> Localization => new CardLoc("主动超算", "可弃置至多 {Cycle:diff()} 张牌，抽取等量的牌。\n本场下一张手动打出的信号球获得三消强化。不可叠层；强化视为三消效果，每次出牌仅计一次。");
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
         var prefs = new CardSelectorPrefs(CardSelectorPrefs.DiscardSelectionPrompt, 0, DynamicVars["Cycle"].IntValue);
@@ -82,7 +83,7 @@ public sealed class SupercomputeCard() : ChaosCard(1, CardType.Skill, CardRarity
             await CardPileCmd.Draw(context, selected.Length, Owner);
         }
         if (!CombatManager.Instance.IsOverOrEnding && !Owner.Creature.IsDead && Owner.PlayerCombatState is { } state)
-            CustomResources<Supercompute>.Get(state).Amount = 1;
+            ResonanceRuntime.GainSupercompute(Owner);
     }
     protected override void OnUpgrade() => DynamicVars["Cycle"].UpgradeValueBy(1);
 }

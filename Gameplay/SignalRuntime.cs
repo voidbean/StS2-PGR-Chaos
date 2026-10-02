@@ -49,18 +49,21 @@ internal static class SignalRuntime
             SignalRules.UnchangedAfterRemoval(snapshot.Hand, state.Hand.Cards, card);
         var super = CustomResources<Supercompute>.Get(state);
         var resolution = snapshot.Resolution.Resolve(natural ? snapshot.Pair.Length + 1 : 1, super.Amount > 0);
-        if (!snapshot.Counted)
+        bool firstResolution = !snapshot.Counted;
+        if (firstResolution)
         {
             DebugSession.Record(card.Owner, natural ? snapshot.Pair.Length + 1 : 1, resolution.ConsumeSupercompute);
             snapshot.Counted = true;
         }
         // Consume the existing charge before discard hooks can create another one.
         if (resolution.ConsumeSupercompute) super.Amount = 0;
-        if (!resolution.ConsumePair) return resolution.Strength;
-        foreach (var auxiliary in snapshot.Pair) Suppressed.Add(auxiliary);
-        try { await CardCmd.Discard(context, snapshot.Pair); }
-        finally { foreach (var auxiliary in snapshot.Pair) Suppressed.Remove(auxiliary); }
-        if (snapshot.Pair.Length == 2 && !CombatManager.Instance.IsOverOrEnding && !card.Owner.Creature.IsDead)
+        if (resolution.ConsumePair)
+        {
+            foreach (var auxiliary in snapshot.Pair) Suppressed.Add(auxiliary);
+            try { await CardCmd.Discard(context, snapshot.Pair); }
+            finally { foreach (var auxiliary in snapshot.Pair) Suppressed.Remove(auxiliary); }
+        }
+        if (firstResolution && ResonanceRules.IsTriple(resolution.Strength) && !CombatManager.Instance.IsOverOrEnding && !card.Owner.Creature.IsDead)
         {
             int block = RavenRuntime.Get(card.Owner).RecordTriple();
             if (block > 0) await CreatureCmd.GainBlock(card.Owner.Creature, block, MegaCrit.Sts2.Core.ValueProps.ValueProp.Move, play);
