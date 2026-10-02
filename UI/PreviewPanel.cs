@@ -22,6 +22,7 @@ internal static class PreviewPanel
             var status = new Label { MouseFilter = Control.MouseFilterEnum.Ignore };
             var preview = new Label { MouseFilter = Control.MouseFilterEnum.Ignore };
             panel.AddChild(status); panel.AddChild(preview); ui.AddChild(panel);
+            DebugPanel.Attach(ui, panel, player, combat);
             var tinted = new Dictionary<NCard, Color>();
             void Restore()
             {

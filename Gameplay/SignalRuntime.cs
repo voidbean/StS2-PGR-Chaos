@@ -14,6 +14,7 @@ internal static class SignalRuntime
     private sealed record Snapshot(CardModel[] Hand, CardModel[] Pair)
     {
         public PlayResolution Resolution { get; } = new();
+        public bool Counted { get; set; }
     }
     private static readonly Dictionary<CardModel, Snapshot> Snapshots = [];
     internal static readonly HashSet<CardModel> Suppressed = [];
@@ -48,6 +49,11 @@ internal static class SignalRuntime
             SignalRules.UnchangedAfterRemoval(snapshot.Hand, state.Hand.Cards, card);
         var super = CustomResources<Supercompute>.Get(state);
         var resolution = snapshot.Resolution.Resolve(natural ? snapshot.Pair.Length + 1 : 1, super.Amount > 0);
+        if (!snapshot.Counted)
+        {
+            DebugSession.Record(card.Owner, natural ? snapshot.Pair.Length + 1 : 1, resolution.ConsumeSupercompute);
+            snapshot.Counted = true;
+        }
         // Consume the existing charge before discard hooks can create another one.
         if (resolution.ConsumeSupercompute) super.Amount = 0;
         if (!resolution.ConsumePair) return resolution.Strength;

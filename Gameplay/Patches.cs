@@ -33,7 +33,7 @@ internal static class NoQueuePatch
     {
         __state = false;
         if (__instance.Owner.Character is not ChaosCharacter) return true;
-        if (SignalRuntime.Pending.ContainsKey(__instance.Owner)) { __result = false; return false; }
+        if (UI.DebugPanel.Busy || SignalRuntime.Pending.ContainsKey(__instance.Owner)) { __result = false; return false; }
         SignalRuntime.Pending.Add(__instance.Owner, __instance);
         __state = true;
         return true;
@@ -89,5 +89,6 @@ internal static class AutoPlayPatch
 [HarmonyPatch(typeof(PlayerCombatState), nameof(PlayerCombatState.AfterCombatEnd))]
 internal static class EndCombatPatch
 {
+    [HarmonyPrefix] static void Prefix(PlayerCombatState __instance) => DebugSession.Finish(__instance);
     [HarmonyPostfix] static void Postfix() => SignalRuntime.Reset();
 }

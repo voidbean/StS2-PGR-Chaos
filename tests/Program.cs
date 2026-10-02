@@ -9,6 +9,18 @@ using System.Reflection;
 
 int checks = 0;
 void Check(bool pass, string label) { checks++; if (!pass) throw new Exception(label); }
+var metrics = new DebugMetrics();
+metrics.Record(1, false);
+metrics.Record(2, false);
+metrics.Record(3, false);
+metrics.Record(1, true);
+metrics.Record(3, true);
+Check(metrics.Single == 2 && metrics.Double == 1 && metrics.Triple == 2, "metrics classify by actual consumed cards, not enhanced strength");
+Check(metrics.Supercompute == 2, "supercompute counted separately including overlap with natural triple");
+metrics.MarkIntervention();
+Check(metrics.Interventions == 1 && new DebugMetrics().Triple == 0, "interventions marked and new combat starts empty");
+try { metrics.Record(0, false); throw new Exception("invalid consumption accepted"); }
+catch (ArgumentOutOfRangeException) { Check(metrics.Single == 2, "invalid consumption leaves statistics unchanged"); }
 for (int n = 1; n <= 8; n++)
 {
     for (int code = 0; code < 1 << (2 * n); code++)
