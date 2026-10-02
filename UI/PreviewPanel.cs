@@ -40,6 +40,7 @@ internal static class PreviewPanel
                 var raven = RavenRuntime.Get(player);
                 status.Text = $"卡俄斯 · 原型\n充能 {charge} / 大招需 3–4\n超算：{(super ? "就绪" : "未就绪")}\n本回合三消 {raven.Triples} / 冰华加伤 {raven.IceBonus}\n女神连接：{(raven.ConnectionReady ? "就绪" : "未就绪")}";
                 if (player.Creature.GetPower<PerfectDodgePower>() != null) status.Text += "\n极限闪避：等待完整格挡";
+                if (player.Creature.GetPower<HyperdimensionalPower>() is { } space) status.Text += $"\n超维空间：视点 {space.Viewpoints} / 3";
                 if (player.Creature.GetPower<DeadlinePower>() is { } deadline) status.Text += $"\n死线计时：{deadline.TurnsUntilSupply} 回合后补球";
                 if (player.Creature.GetPower<AfterglowPower>() is { } glow) status.Text += $"\n光耀余晖：{(glow.Active ? "增伤 30%" : "等待三消")}";
                 if (player.Creature.GetPower<LightningPower>() is { } lightning) status.Text += $"\n超算闪电：{(lightning.Active ? "敌人承伤 +10%" : "等待超算")}";

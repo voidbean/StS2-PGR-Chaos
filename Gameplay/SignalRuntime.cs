@@ -15,6 +15,7 @@ internal static class SignalRuntime
     {
         public PlayResolution Resolution { get; } = new();
         public bool Counted { get; set; }
+        public bool EffectCompleted { get; set; }
     }
     private static readonly Dictionary<CardModel, Snapshot> Snapshots = [];
     internal static readonly HashSet<CardModel> Suppressed = [];
@@ -37,6 +38,15 @@ internal static class SignalRuntime
         if (Pending.TryGetValue(card.Owner, out var pending) && ReferenceEquals(card, pending)) Pending.Remove(card.Owner);
     }
     internal static void Reset() { Snapshots.Clear(); Suppressed.Clear(); Pending.Clear(); RavenRuntime.Reset(); }
+
+    internal static async Task AfterEffect(PlayerChoiceContext context, SignalCard card, CardPlay play, int strength)
+    {
+        if (play.IsAutoPlay || !Snapshots.TryGetValue(card, out var snapshot) || snapshot.EffectCompleted) return;
+        snapshot.EffectCompleted = true;
+        if (strength != 3 || CombatManager.Instance.IsOverOrEnding || !card.Owner.Creature.IsAlive) return;
+        if (card.Owner.Creature.GetPower<HyperdimensionalPower>() is { } space)
+            await space.AfterTriple(context);
+    }
 
     internal static async Task<int> Resolve(PlayerChoiceContext context, SignalCard card, CardPlay play)
     {

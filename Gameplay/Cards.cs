@@ -30,6 +30,7 @@ public abstract class SignalCard(CardType type, TargetType target, CardRarity ra
         if (TargetType == TargetType.AnyEnemy && (play.Target == null || !play.Target.IsAlive)) return;
         await Effect(context, play, strength);
         if (strength == 3 && Owner.Creature.GetPower<AfterglowPower>() is { } glow) glow.Active = true;
+        await SignalRuntime.AfterEffect(context, this, play, strength);
     }
     protected abstract Task Effect(PlayerChoiceContext context, CardPlay play, int strength);
 }

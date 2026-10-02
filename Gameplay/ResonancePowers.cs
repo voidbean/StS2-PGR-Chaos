@@ -63,8 +63,6 @@ public sealed class LightningPower : ResonancePower
 public sealed class DeadlinePower : ResonancePower
 {
     private int _appliedTurn;
-    private HashSet<CardModel>? _temporaryCards;
-    private HashSet<CardModel> Temporary => _temporaryCards ??= [];
     public int TurnsUntilSupply => Math.Max(0, 1 + ((Owner.Player!.PlayerCombatState!.TurnNumber - _appliedTurn) % 2));
     public override List<(string, string)> Localization => new PowerLoc("死线计时", "从下回合开始，隔回合在抽牌后补充 3 张随机同色临时球。满手停止生成。", "从下回合开始，隔回合在抽牌后补充 3 张随机同色临时球。满手停止生成。");
     public override Task AfterApplied(Creature? applier, CardModel? source)
@@ -81,18 +79,21 @@ public sealed class DeadlinePower : ResonancePower
     {
         var player = Owner.Player!;
         int color = player.RunState.Rng.CombatCardSelection.NextInt(3);
-        for (int i = 0; i < count; i++)
+        await TemporarySignals.Generate(context, player, count, i =>
         {
-            if (CombatManager.Instance.IsOverOrEnding || !Owner.IsAlive || player.PlayerCombatState!.Hand.Cards.Count >= CardPile.MaxCardsInHand) break;
             if (!sameColor && i > 0) color = player.RunState.Rng.CombatCardSelection.NextInt(3);
-            CardModel canonical = color switch { 0 => ModelDb.Card<RedSignal>(), 1 => ModelDb.Card<YellowSignal>(), _ => ModelDb.Card<BlueSignal>() };
-            var card = CombatState.CreateCard(canonical, player);
-            card.AddKeyword(CardKeyword.Exhaust);
-            card.AddKeyword(CardKeyword.Ethereal);
-            Temporary.Add(card);
-            await CardPileCmd.AddGeneratedCardsToCombat([card], PileType.Hand, player);
-        }
+            return color switch { 0 => SignalColor.Red, 1 => SignalColor.Yellow, _ => SignalColor.Blue };
+        });
     }
+}
+
+// Both supply cards share cleanup; this power does not grant Deadline's recurring supply.
+public sealed class TemporarySignalsPower : ResonancePower
+{
+    private HashSet<CardModel>? _temporaryCards;
+    private HashSet<CardModel> Temporary => _temporaryCards ??= [];
+    public override List<(string, string)> Localization => new PowerLoc("临时信号球", "临时球打出后消耗；弃置或回合结束时移出战斗。", "临时球打出后消耗；弃置或回合结束时移出战斗。");
+    internal void Track(CardModel card) => Temporary.Add(card);
     public override async Task AfterCardDiscarded(PlayerChoiceContext context, CardModel card)
     {
         if (Temporary.Remove(card)) await CardPileCmd.RemoveFromCombat(card);
@@ -112,5 +113,31 @@ internal static class ResonanceRuntime
         if (player.PlayerCombatState == null || !player.Creature.IsAlive || CombatManager.Instance.IsOverOrEnding) return;
         CustomResources<Supercompute>.Get(player.PlayerCombatState).Amount = 1;
         if (player.Creature.GetPower<LightningPower>() is { } lightning) lightning.Active = true;
+    }
+}
+
+internal static class TemporarySignals
+{
+    internal static async Task Generate(PlayerChoiceContext context, Player player, int count, Func<int, SignalColor> chooseColor)
+    {
+        if (CombatManager.Instance.IsOverOrEnding || !player.Creature.IsAlive || player.PlayerCombatState == null || player.PlayerCombatState.Hand.Cards.Count >= CardPile.MaxCardsInHand) return;
+        var cleanup = player.Creature.GetPower<TemporarySignalsPower>() ?? await PowerCmd.Apply<TemporarySignalsPower>(context, player.Creature, 1, player.Creature, null);
+        if (cleanup == null) return;
+        for (int i = 0; i < count; i++)
+        {
+            if (CombatManager.Instance.IsOverOrEnding || !player.Creature.IsAlive || player.PlayerCombatState.Hand.Cards.Count >= CardPile.MaxCardsInHand) break;
+            CardModel canonical = chooseColor(i) switch
+            {
+                SignalColor.Red => ModelDb.Card<RedSignal>(),
+                SignalColor.Yellow => ModelDb.Card<YellowSignal>(),
+                SignalColor.Blue => ModelDb.Card<BlueSignal>(),
+                _ => throw new ArgumentOutOfRangeException(nameof(chooseColor))
+            };
+            var card = player.Creature.CombatState!.CreateCard(canonical, player);
+            card.AddKeyword(CardKeyword.Exhaust);
+            card.AddKeyword(CardKeyword.Ethereal);
+            cleanup.Track(card);
+            await CardPileCmd.AddGeneratedCardsToCombat([card], PileType.Hand, player);
+        }
     }
 }

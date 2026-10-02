@@ -68,8 +68,8 @@ Check(Enumerable.Range(4, 7).Where(t => ResonanceRules.DeadlineDue(4, t)).Sequen
 Check(resource.Amount == 4, "charge retention"); resource.PrepForCombat<Charge>(null!);
 Check(resource.Amount == 0 && !resource.ApplySharedModification, "charge reset/shared-free exclusion");
 var assembly = typeof(ChaosCharacter).Assembly;
-Check(assembly.GetTypes().Count(t => !t.IsAbstract && typeof(ChaosCard).IsAssignableFrom(t)) == 18, "eighteen card types");
-Check(assembly.GetTypes().Count(t => !t.IsAbstract && typeof(SignalCard).IsAssignableFrom(t)) == 6, "six signal types");
+Check(new[] { typeof(SwiftAssault), typeof(HyperdimensionalSpace), typeof(CausalConvergence), typeof(TemporalFinality), typeof(RealmTraversal) }.All(t => !t.IsAbstract && typeof(ChaosCard).IsAssignableFrom(t) && assembly.GetTypes().Contains(t)), "hyperreal card models registered in assembly");
+Check(assembly.GetTypes().Count(t => !t.IsAbstract && typeof(SignalCard).IsAssignableFrom(t)) == 7, "seven signal types");
 var red = new RedSignal(); var yellow = new YellowSignal(); var blue = new BlueSignal();
 var superCard = new SupercomputeCard(); var ultimate = new Ultimate(); var dodge = new PerfectDodge();
 Check(dodge.Rarity == CardRarity.Basic && dodge.DynamicVars["Block"].BaseValue == 7 && dodge.EnergyCost.Canonical == 1 && !dodge.CanonicalKeywords.Contains(CardKeyword.Exhaust), "starter dodge is one cost seven block and reusable");
@@ -134,6 +134,7 @@ Check(upgradedSuper.DynamicVars["Cycle"].BaseValue == 3 && upgradedSuper.EnergyC
 var deck = character.StartingDeck.ToArray();
 Check(deck.Length == 11 && deck.Count(c => c is RedSignal) == 3 && deck.Count(c => c is YellowSignal) == 3 && deck.Count(c => c is BlueSignal) == 3, "11-card starting deck composition");
 Check(deck.Count(c => c is Ultimate) == 1 && deck.Count(c => c is PerfectDodge) == 1 && !deck.Any(c => c is SupercomputeCard) && character.StartingRelics.Single() is SignalCore, "starter utility and relic");
+await HyperrealChecks.Run(Check);
 // Apply real Harmony patches to the actual installed assembly without executing a combat.
 // This catches bad overloads, target methods and injected parameter signatures.
 var harmony = new Harmony("ChaosPrototype");

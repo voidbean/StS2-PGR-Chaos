@@ -73,6 +73,7 @@ internal static class DebugPanel
         AddAction(cardRow, "加入本局牌组", async () =>
         {
             if (choice.Selected < 0 || choice.Selected >= cards.Length) throw new InvalidOperationException("请先选牌");
+            if (cards[choice.Selected].Rarity == CardRarity.Token) throw new InvalidOperationException("衍生牌仅限本场，不能加入永久牌组");
             var run = RunManager.Instance.DebugOnlyGetState() ?? throw new InvalidOperationException("当前没有进行中的冒险");
             var card = run.CreateCard(cards[choice.Selected], player);
             await CardPileCmd.Add(card, PileType.Deck);
