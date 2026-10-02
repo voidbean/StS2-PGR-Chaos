@@ -76,7 +76,7 @@ internal static class AutoPlayPatch
     [HarmonyPrefix] static bool Prefix(PlayerChoiceContext choiceContext, CardModel card, ref Task __result)
     {
         if (SignalRuntime.Suppressed.Contains(card)) { __result = Task.CompletedTask; return false; }
-        if (card is not Ultimate) return true;
+        if (card is not BurstCard) return true;
         __result = SkipUltimate(choiceContext, card);
         return false;
     }

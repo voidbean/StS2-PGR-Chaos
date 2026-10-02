@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework><ImplicitUsings>enable</ImplicitUsings><Nullable>enable</Nullable>
-    <AssemblyName>ChaosPrototype</AssemblyName><Version>0.3.0</Version>
+    <AssemblyName>ChaosPrototype</AssemblyName><Version>0.4.0</Version>
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="tests/**/*.cs" />

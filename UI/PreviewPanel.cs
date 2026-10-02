@@ -37,7 +37,8 @@ internal static class PreviewPanel
                 if (state == null) return;
                 int charge = CustomResources<Charge>.Get(state).Amount;
                 bool super = CustomResources<Supercompute>.Get(state).Amount > 0;
-                status.Text = $"卡俄斯 · 原型\n充能 {charge} / 大招需 3\n超算：{(super ? "就绪" : "未就绪")}";
+                var raven = RavenRuntime.Get(player);
+                status.Text = $"卡俄斯 · 原型\n充能 {charge} / 大招需 3–4\n超算：{(super ? "就绪" : "未就绪")}\n本回合自然三消 {raven.Triples} / 冰华加伤 {raven.IceBonus}\n女神连接：{(raven.ConnectionReady ? "就绪" : "未就绪")}";
                 var hand = NPlayerHand.Instance;
                 CardModel? hovered = hand?.FocusedHolder?.CardModel;
                 if (hand?.InCardPlay == true && AccessTools.Field(typeof(NPlayerHand), "_currentCardPlay").GetValue(hand) is NCardPlay active)

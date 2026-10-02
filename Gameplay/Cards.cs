@@ -20,7 +20,7 @@ public abstract class ChaosCard(int cost, CardType type, CardRarity rarity, Targ
     public override string BetaPortraitPath => Main.Art(ArtName);
 }
 
-public abstract class SignalCard(CardType type, TargetType target) : ChaosCard(1, type, CardRarity.Common, target)
+public abstract class SignalCard(CardType type, TargetType target, CardRarity rarity = CardRarity.Common) : ChaosCard(1, type, rarity, target)
 {
     public abstract SignalColor SignalColor { get; }
     protected sealed override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
@@ -32,7 +32,7 @@ public abstract class SignalCard(CardType type, TargetType target) : ChaosCard(1
     }
     protected abstract Task Effect(PlayerChoiceContext context, CardPlay play, int strength);
 }
-public sealed class RedSignal() : SignalCard(CardType.Attack, TargetType.AnyEnemy)
+public sealed class RedSignal() : SignalCard(CardType.Attack, TargetType.AnyEnemy, CardRarity.Basic)
 {
     public override SignalColor SignalColor => SignalColor.Red;
     protected override string ArtName => "red";
@@ -42,7 +42,7 @@ public sealed class RedSignal() : SignalCard(CardType.Attack, TargetType.AnyEnem
         await DamageCmd.Attack(DynamicVars[strength == 3 ? "TripleDamage" : "Damage"].BaseValue).FromCard(this).Targeting(play.Target!).Execute(context);
     protected override void OnUpgrade() { DynamicVars["Damage"].UpgradeValueBy(3); DynamicVars["TripleDamage"].UpgradeValueBy(6); }
 }
-public sealed class YellowSignal() : SignalCard(CardType.Skill, TargetType.Self)
+public sealed class YellowSignal() : SignalCard(CardType.Skill, TargetType.Self, CardRarity.Basic)
 {
     public override SignalColor SignalColor => SignalColor.Yellow;
     protected override string ArtName => "yellow";
@@ -52,7 +52,7 @@ public sealed class YellowSignal() : SignalCard(CardType.Skill, TargetType.Self)
         await CreatureCmd.GainBlock(Owner.Creature, DynamicVars[strength == 3 ? "TripleBlock" : "Block"].BaseValue, ValueProp.Move, play);
     protected override void OnUpgrade() { DynamicVars["Block"].UpgradeValueBy(3); DynamicVars["TripleBlock"].UpgradeValueBy(6); }
 }
-public sealed class BlueSignal() : SignalCard(CardType.Attack, TargetType.AnyEnemy)
+public sealed class BlueSignal() : SignalCard(CardType.Attack, TargetType.AnyEnemy, CardRarity.Basic)
 {
     public override SignalColor SignalColor => SignalColor.Blue;
     protected override string ArtName => "blue";
@@ -86,14 +86,14 @@ public sealed class SupercomputeCard() : ChaosCard(1, CardType.Skill, CardRarity
     }
     protected override void OnUpgrade() => DynamicVars["Cycle"].UpgradeValueBy(1);
 }
-public sealed class Ultimate : ChaosCard
+public sealed class Ultimate : BurstCard
 {
-    public Ultimate() : base(0, CardType.Attack, CardRarity.Rare, TargetType.AnyEnemy) => CustomResources<Charge>.SetCanonicalCost(this, 3);
+    public Ultimate() : base(3, CardType.Attack, TargetType.AnyEnemy, CardRarity.Basic) { }
     protected override string ArtName => "ultimate";
     public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Retain];
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(18, ValueProp.Move)];
     public override List<(string, string)> Localization => new CardLoc("信号爆发", "保留。消耗 3 充能，造成 {Damage:diff()} 点伤害。\n原型中不可自动打出。");
-    protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
+    protected override async Task BurstEffect(PlayerChoiceContext context, CardPlay play)
     {
         if (play.IsAutoPlay || play.Target == null || !play.Target.IsAlive) return;
         await DamageCmd.Attack(DynamicVars["Damage"].BaseValue).FromCard(this).Targeting(play.Target).Execute(context);

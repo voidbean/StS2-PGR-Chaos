@@ -36,7 +36,7 @@ internal static class SignalRuntime
         Snapshots.Remove(card);
         if (Pending.TryGetValue(card.Owner, out var pending) && ReferenceEquals(card, pending)) Pending.Remove(card.Owner);
     }
-    internal static void Reset() { Snapshots.Clear(); Suppressed.Clear(); Pending.Clear(); }
+    internal static void Reset() { Snapshots.Clear(); Suppressed.Clear(); Pending.Clear(); RavenRuntime.Reset(); }
 
     internal static async Task<int> Resolve(PlayerChoiceContext context, SignalCard card, CardPlay play)
     {
@@ -60,6 +60,11 @@ internal static class SignalRuntime
         foreach (var auxiliary in snapshot.Pair) Suppressed.Add(auxiliary);
         try { await CardCmd.Discard(context, snapshot.Pair); }
         finally { foreach (var auxiliary in snapshot.Pair) Suppressed.Remove(auxiliary); }
+        if (snapshot.Pair.Length == 2 && !CombatManager.Instance.IsOverOrEnding && !card.Owner.Creature.IsDead)
+        {
+            int block = RavenRuntime.Get(card.Owner).RecordTriple();
+            if (block > 0) await CreatureCmd.GainBlock(card.Owner.Creature, block, MegaCrit.Sts2.Core.ValueProps.ValueProp.Move, play);
+        }
         return resolution.Strength;
     }
 }
