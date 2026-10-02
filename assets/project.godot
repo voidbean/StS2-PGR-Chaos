@@ -1,0 +1,6 @@
+config_version=5
+[application]
+config/name="ChaosPrototype Assets"
+config/features=PackedStringArray("4.5", "GL Compatibility")
+[rendering]
+renderer/rendering_method="gl_compatibility"

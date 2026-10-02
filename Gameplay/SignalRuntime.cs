@@ -1,0 +1,59 @@
+using BaseLib.Abstracts;
+using ChaosPrototype.Core;
+using MegaCrit.Sts2.Core.Combat;
+using MegaCrit.Sts2.Core.Commands;
+using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Entities.Players;
+using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.Models;
+
+namespace ChaosPrototype.Gameplay;
+
+internal static class SignalRuntime
+{
+    private sealed record Snapshot(CardModel[] Hand, CardModel[] Pair)
+    {
+        public PlayResolution Resolution { get; } = new();
+    }
+    private static readonly Dictionary<CardModel, Snapshot> Snapshots = [];
+    internal static readonly HashSet<CardModel> Suppressed = [];
+    // Pending reservations prevent extra manual plays while a Chaos card is queued/executing.
+    internal static readonly Dictionary<Player, CardModel> Pending = [];
+    internal static bool HasCore(Player player) => player.Relics.Any(r => r is SignalCore);
+    internal static SignalColor Color(CardModel card) => card is SignalCard signal ? signal.SignalColor : SignalColor.None;
+    internal static CardModel[] Preview(CardModel card) => card.Owner?.PlayerCombatState is { } state && HasCore(card.Owner)
+        ? SignalRules.Auxiliary(state.Hand.Cards, card, Color) : [];
+
+    internal static void Capture(CardModel card)
+    {
+        if (card is not SignalCard || card.Pile?.Type != PileType.Hand) return;
+        var hand = card.Owner.PlayerCombatState!.Hand.Cards.ToArray();
+        Snapshots[card] = new(hand, HasCore(card.Owner) ? SignalRules.Auxiliary(hand, card, Color) : []);
+    }
+    internal static void Cleanup(CardModel card)
+    {
+        Snapshots.Remove(card);
+        if (Pending.TryGetValue(card.Owner, out var pending) && ReferenceEquals(card, pending)) Pending.Remove(card.Owner);
+    }
+    internal static void Reset() { Snapshots.Clear(); Suppressed.Clear(); Pending.Clear(); }
+
+    internal static async Task<bool> Resolve(PlayerChoiceContext context, SignalCard card, CardPlay play)
+    {
+        if (play.IsAutoPlay) return false;
+        if (!Snapshots.TryGetValue(card, out var snapshot)) return false;
+        if (CombatManager.Instance.IsOverOrEnding || card.Owner.Creature.IsDead) return false;
+        if (card.TargetType == TargetType.AnyEnemy && (play.Target == null || !play.Target.IsAlive)) return false;
+        var state = card.Owner.PlayerCombatState!;
+        var natural = HasCore(card.Owner) && snapshot.Pair.Length == 2 &&
+            SignalRules.UnchangedAfterRemoval(snapshot.Hand, state.Hand.Cards, card);
+        var super = CustomResources<Supercompute>.Get(state);
+        var resolution = snapshot.Resolution.Resolve(natural, super.Amount > 0);
+        // Consume the existing charge before discard hooks can create another one.
+        if (resolution.ConsumeSupercompute) super.Amount = 0;
+        if (!resolution.ConsumePair) return resolution.Enhanced;
+        foreach (var auxiliary in snapshot.Pair) Suppressed.Add(auxiliary);
+        try { await CardCmd.Discard(context, snapshot.Pair); }
+        finally { foreach (var auxiliary in snapshot.Pair) Suppressed.Remove(auxiliary); }
+        return resolution.Enhanced;
+    }
+}
