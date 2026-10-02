@@ -29,6 +29,7 @@ public sealed partial class ChaosCharacter : PlaceholderCharacterModel
 public sealed class ChaosCardPool : CustomCardPoolModel
 {
     public override string Title => "ChaosPrototype";
+    public override bool SeenByDefault => true;
     // Custom ability cards now supply the shop Power slot.
     protected override CardModel[] GenerateAllCards() => [];
     public override Color DeckEntryCardColor => new("9bd4f5");
