@@ -14,6 +14,7 @@ namespace ChaosPrototype.Gameplay;
 [Pool(typeof(ChaosCardPool))]
 public abstract class ChaosCard(int cost, CardType type, CardRarity rarity, TargetType target) : CustomCardModel(cost, type, rarity, target)
 {
+    public virtual bool PreventAutoPlay => false;
     protected abstract string ArtName { get; }
     public override string CustomPortraitPath => Main.Art(ArtName);
     public override string PortraitPath => Main.Art(ArtName);

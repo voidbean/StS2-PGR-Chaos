@@ -44,6 +44,10 @@ internal static class PreviewPanel
                 if (player.Creature.GetPower<DeadlinePower>() is { } deadline) status.Text += $"\n死线计时：{deadline.TurnsUntilSupply} 回合后补球";
                 if (player.Creature.GetPower<AfterglowPower>() is { } glow) status.Text += $"\n光耀余晖：{(glow.Active ? "增伤 30%" : "等待三消")}";
                 if (player.Creature.GetPower<LightningPower>() is { } lightning) status.Text += $"\n超算闪电：{(lightning.Active ? "敌人承伤 +10%" : "等待超算")}";
+                if (player.Creature.GetPower<OathflameFlightPower>() != null) status.Text += "\n飞行：攻击减伤 50%";
+                if (player.Creature.GetPower<MoltenChasePower>() is { } chase) status.Text += $"\n熔金追击：剩余 {chase.Remaining} 次";
+                if (player.Creature.GetPower<OmegaCorePower>() != null) status.Text += "\nΩ 核心：供能中";
+                else if (OathflameRuntime.Omega(player).Burned) status.Text += "\nΩ 核心：已燃尽";
                 var hand = NPlayerHand.Instance;
                 CardModel? hovered = hand?.FocusedHolder?.CardModel;
                 if (hand?.InCardPlay == true && AccessTools.Field(typeof(NPlayerHand), "_currentCardPlay").GetValue(hand) is NCardPlay active)

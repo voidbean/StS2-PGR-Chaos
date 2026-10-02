@@ -16,11 +16,12 @@ using MegaCrit.Sts2.Core.ValueProps;
 
 // Exercise real card effects and lifecycle hooks, replacing only engine command execution.
 // These checks do not assert Godot animations or the native damage formula.
-static class HyperrealChecks
+static partial class HyperrealChecks
 {
     private static readonly List<(decimal Damage, int Hits, Creature? Target, ValueProp Props)> Attacks = [];
     private static readonly List<(decimal Damage, ValueProp Props)> Collapses = [];
     private static readonly List<CardModel> Generated = [];
+    private static readonly List<(PileType Pile, CardPilePosition Position)> Destinations = [];
     private static bool ChooseYellow(IReadOnlyList<CardModel> cards, ref Task<CardModel?> __result)
     {
         if (cards.Count != 2 || cards[0] is not RedSignal || cards[1] is not YellowSignal) throw new Exception("causal choice must be red or yellow");
@@ -42,13 +43,14 @@ static class HyperrealChecks
         __result = Task.FromResult<IEnumerable<DamageResult>>([]);
         return false;
     }
-    private static bool CaptureGenerated(IEnumerable<CardModel> cards, PileType newPileType, ref Task<IReadOnlyList<CardPileAddResult>> __result)
+    private static bool CaptureGenerated(IEnumerable<CardModel> cards, PileType newPileType, CardPilePosition position, ref Task<IReadOnlyList<CardPileAddResult>> __result)
     {
         foreach (var card in cards)
         {
             Generated.Add(card);
+            Destinations.Add((newPileType, position));
             var state = card.Owner.PlayerCombatState!;
-            var pile = newPileType == PileType.Hand && state.Hand.Cards.Count < CardPile.MaxCardsInHand ? state.Hand : state.DiscardPile;
+            var pile = newPileType == PileType.Draw ? state.DrawPile : newPileType == PileType.Hand && state.Hand.Cards.Count < CardPile.MaxCardsInHand ? state.Hand : state.DiscardPile;
             pile.AddInternal(card, silent: true);
         }
         __result = Task.FromResult<IReadOnlyList<CardPileAddResult>>([]);
@@ -59,7 +61,7 @@ static class HyperrealChecks
         AccessTools.Property(typeof(PowerModel), "Owner").SetValue(power, target);
         AccessTools.Property(typeof(PowerModel), "Amount").SetValue(power, (int)amount);
         ((List<PowerModel>)AccessTools.Field(typeof(Creature), "_powers").GetValue(target)!).Add(power);
-        __result = Task.CompletedTask;
+        __result = power.AfterApplied(null, null);
         return false;
     }
     private static bool RemovePower(PowerModel? power, ref Task __result)
@@ -212,6 +214,7 @@ static class HyperrealChecks
             check(Attacks.Count == 0, "finality refuses autoplay");
             await Invoke(finality, "OnPlay", null, Play(finality));
             check(Attacks.Single() == (26m, 1, null, ValueProp.Move), "finality emits one powered all-enemy attack");
+            await RunOathflame(check, player, combat, target, powers, harmony);
             AccessTools.Method(runtime, "Reset").Invoke(null, null);
         }
         finally { harmony.UnpatchAll(harmony.Id); progress.SetValue(CombatManager.Instance, wasInProgress); }

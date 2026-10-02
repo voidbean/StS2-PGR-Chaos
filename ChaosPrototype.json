@@ -1,7 +1,7 @@
 {
   "id": "ChaosPrototype", "name": "卡俄斯 原型", "author": "Local prototype",
   "description": "单人三消与充能实验原型，素材和数值均为占位。",
-  "version": "0.6.0", "has_pck": true, "has_dll": true,
+  "version": "0.7.0", "has_pck": true, "has_dll": true,
   "min_game_version": "0.107.1", "affects_gameplay": true,
   "dependencies": [{"id": "BaseLib", "min_version": "3.4.7"}]
 }

@@ -37,7 +37,7 @@ internal static class SignalRuntime
         Snapshots.Remove(card);
         if (Pending.TryGetValue(card.Owner, out var pending) && ReferenceEquals(card, pending)) Pending.Remove(card.Owner);
     }
-    internal static void Reset() { Snapshots.Clear(); Suppressed.Clear(); Pending.Clear(); RavenRuntime.Reset(); }
+    internal static void Reset() { Snapshots.Clear(); Suppressed.Clear(); Pending.Clear(); RavenRuntime.Reset(); OathflameRuntime.Reset(); }
 
     internal static async Task AfterEffect(PlayerChoiceContext context, SignalCard card, CardPlay play, int strength)
     {
@@ -46,6 +46,8 @@ internal static class SignalRuntime
         if (strength != 3 || CombatManager.Instance.IsOverOrEnding || !card.Owner.Creature.IsAlive) return;
         if (card.Owner.Creature.GetPower<HyperdimensionalPower>() is { } space)
             await space.AfterTriple(context);
+        if (card.Owner.Creature.GetPower<MoltenChasePower>() is { } chase)
+            await chase.AfterTriple(context);
     }
 
     internal static async Task<int> Resolve(PlayerChoiceContext context, SignalCard card, CardPlay play)

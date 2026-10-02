@@ -21,6 +21,7 @@ namespace ChaosPrototype.Gameplay;
 
 public abstract class BurstCard : ChaosCard
 {
+    public override bool PreventAutoPlay => true;
     protected BurstCard(int charge, CardType type, TargetType target, CardRarity rarity = CardRarity.Rare)
         : base(0, type, rarity, target) => CustomResources<Charge>.SetCanonicalCost(this, charge);
     public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Retain];
