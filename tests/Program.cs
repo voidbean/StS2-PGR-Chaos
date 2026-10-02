@@ -58,7 +58,7 @@ Check(yellow.DynamicVars["Block"].BaseValue == 5 && yellow.DynamicVars["TripleBl
 Check(blue.DynamicVars["Damage"].BaseValue == 3 && blue.DynamicVars["TripleDamage"].BaseValue == 6, "blue values");
 Check(ultimate.CanonicalKeywords.Contains(CardKeyword.Retain) && CustomResources<Charge>.CanonicalCost(ultimate) == 3, "ultimate retain/cost");
 Check(new ChaosCharacter().StartingHp == 70 && new SignalCore().Localization.Count == 3, "character and relic constructors");
-Check(red.DynamicVars["DoubleDamage"].BaseValue == 9 && yellow.DynamicVars["DoubleBlock"].BaseValue == 8 && blue.DynamicVars["DoubleDamage"].BaseValue == 5, "double values");
+Check(new ChaosCard[] { red, yellow, blue }.All(c => c.DynamicVars.All(v => !v.Key.StartsWith("Double")) && c.Localization!.All(loc => !loc.Item2.Contains("双消："))), "basic signals have no double bonus or bonus description");
 Check(superCard.DynamicVars["Cycle"].BaseValue == 2, "supercompute selection limit");
 var visualOrder = new CardModel[] { superCard, ultimate, red, blue, yellow };
 Check(MegaCrit.Sts2.Core.Helpers.HandLayoutHelper.GetInsertIndex(visualOrder, new CardModel[] { red, blue }, ultimate) == 0, "functional card displayed before signals");

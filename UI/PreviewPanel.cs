@@ -50,7 +50,7 @@ internal static class PreviewPanel
                 var indices = pair.Select(c => Array.IndexOf(state.Hand.Cards.ToArray(), c) + 1);
                 preview.Text = natural ? $"自然{match}：弃置第 {string.Join("、", indices)} 张" : "单消：没有相邻同色球";
                 if (super) preview.Text += natural ? "\n消耗超算：按三消数值结算" : "\n超算强化：不弃置额外牌";
-                preview.Text += super || pair.Length == 2 ? "\n使用卡面“三消”数值" : natural ? "\n使用卡面“双消”数值" : "\n使用卡面普通数值";
+                preview.Text += super || pair.Length == 2 ? "\n使用卡面“三消”数值" : natural ? "\n双消仅弃辅牌，使用普通数值" : "\n使用卡面普通数值";
                 foreach (var card in pair)
                 {
                     var node = hand?.GetCard(card);

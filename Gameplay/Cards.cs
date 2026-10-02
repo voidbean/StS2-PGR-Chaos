@@ -36,35 +36,35 @@ public sealed class RedSignal() : SignalCard(CardType.Attack, TargetType.AnyEnem
 {
     public override SignalColor SignalColor => SignalColor.Red;
     protected override string ArtName => "red";
-    protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(6, ValueProp.Move), new DamageVar("DoubleDamage", 9, ValueProp.Move), new DamageVar("TripleDamage", 12, ValueProp.Move)];
-    public override List<(string, string)> Localization => new CardLoc("红色信号球", "造成 {Damage:diff()} 点伤害。\n双消：{DoubleDamage:diff()} 点伤害。\n三消：{TripleDamage:diff()} 点伤害。");
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(6, ValueProp.Move), new DamageVar("TripleDamage", 12, ValueProp.Move)];
+    public override List<(string, string)> Localization => new CardLoc("红色信号球", "造成 {Damage:diff()} 点伤害。\n三消：{TripleDamage:diff()} 点伤害。");
     protected override async Task Effect(PlayerChoiceContext context, CardPlay play, int strength) =>
-        await DamageCmd.Attack(DynamicVars[strength == 3 ? "TripleDamage" : strength == 2 ? "DoubleDamage" : "Damage"].BaseValue).FromCard(this).Targeting(play.Target!).Execute(context);
-    protected override void OnUpgrade() { DynamicVars["Damage"].UpgradeValueBy(3); DynamicVars["DoubleDamage"].UpgradeValueBy(5); DynamicVars["TripleDamage"].UpgradeValueBy(6); }
+        await DamageCmd.Attack(DynamicVars[strength == 3 ? "TripleDamage" : "Damage"].BaseValue).FromCard(this).Targeting(play.Target!).Execute(context);
+    protected override void OnUpgrade() { DynamicVars["Damage"].UpgradeValueBy(3); DynamicVars["TripleDamage"].UpgradeValueBy(6); }
 }
 public sealed class YellowSignal() : SignalCard(CardType.Skill, TargetType.Self)
 {
     public override SignalColor SignalColor => SignalColor.Yellow;
     protected override string ArtName => "yellow";
-    protected override IEnumerable<DynamicVar> CanonicalVars => [new BlockVar(5, ValueProp.Move), new BlockVar("DoubleBlock", 8, ValueProp.Move), new BlockVar("TripleBlock", 10, ValueProp.Move)];
-    public override List<(string, string)> Localization => new CardLoc("黄色信号球", "获得 {Block:diff()} 点格挡。\n双消：{DoubleBlock:diff()} 点格挡。\n三消：{TripleBlock:diff()} 点格挡。");
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new BlockVar(5, ValueProp.Move), new BlockVar("TripleBlock", 10, ValueProp.Move)];
+    public override List<(string, string)> Localization => new CardLoc("黄色信号球", "获得 {Block:diff()} 点格挡。\n三消：{TripleBlock:diff()} 点格挡。");
     protected override async Task Effect(PlayerChoiceContext context, CardPlay play, int strength) =>
-        await CreatureCmd.GainBlock(Owner.Creature, DynamicVars[strength == 3 ? "TripleBlock" : strength == 2 ? "DoubleBlock" : "Block"].BaseValue, ValueProp.Move, play);
-    protected override void OnUpgrade() { DynamicVars["Block"].UpgradeValueBy(3); DynamicVars["DoubleBlock"].UpgradeValueBy(4); DynamicVars["TripleBlock"].UpgradeValueBy(6); }
+        await CreatureCmd.GainBlock(Owner.Creature, DynamicVars[strength == 3 ? "TripleBlock" : "Block"].BaseValue, ValueProp.Move, play);
+    protected override void OnUpgrade() { DynamicVars["Block"].UpgradeValueBy(3); DynamicVars["TripleBlock"].UpgradeValueBy(6); }
 }
 public sealed class BlueSignal() : SignalCard(CardType.Attack, TargetType.AnyEnemy)
 {
     public override SignalColor SignalColor => SignalColor.Blue;
     protected override string ArtName => "blue";
-    protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(3, ValueProp.Move), new DamageVar("DoubleDamage", 5, ValueProp.Move), new DamageVar("TripleDamage", 6, ValueProp.Move)];
-    public override List<(string, string)> Localization => new CardLoc("蓝色信号球", "造成 {Damage:diff()} 点伤害，获得 1 充能。\n双消：{DoubleDamage:diff()} 点伤害和 1 充能。\n三消：{TripleDamage:diff()} 点伤害和 2 充能。");
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(3, ValueProp.Move), new DamageVar("TripleDamage", 6, ValueProp.Move)];
+    public override List<(string, string)> Localization => new CardLoc("蓝色信号球", "造成 {Damage:diff()} 点伤害，获得 1 充能。\n三消：{TripleDamage:diff()} 点伤害和 2 充能。");
     protected override async Task Effect(PlayerChoiceContext context, CardPlay play, int strength)
     {
-        await DamageCmd.Attack(DynamicVars[strength == 3 ? "TripleDamage" : strength == 2 ? "DoubleDamage" : "Damage"].BaseValue).FromCard(this).Targeting(play.Target!).Execute(context);
+        await DamageCmd.Attack(DynamicVars[strength == 3 ? "TripleDamage" : "Damage"].BaseValue).FromCard(this).Targeting(play.Target!).Execute(context);
         if (!CombatManager.Instance.IsOverOrEnding && !Owner.Creature.IsDead && Owner.PlayerCombatState is { } state)
             CustomResources<Charge>.Get(state).ModifyAmount(strength == 3 ? 2 : 1);
     }
-    protected override void OnUpgrade() { DynamicVars["Damage"].UpgradeValueBy(2); DynamicVars["DoubleDamage"].UpgradeValueBy(3); DynamicVars["TripleDamage"].UpgradeValueBy(4); }
+    protected override void OnUpgrade() { DynamicVars["Damage"].UpgradeValueBy(2); DynamicVars["TripleDamage"].UpgradeValueBy(4); }
 }
 public sealed class SupercomputeCard() : ChaosCard(1, CardType.Skill, CardRarity.Uncommon, TargetType.Self)
 {
