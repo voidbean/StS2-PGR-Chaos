@@ -66,3 +66,11 @@
 | FallingFire | 技能 里 超刻 蓝.png | [Wiki](https://wiki.biligame.com/zspms/%E9%87%8C%C2%B7%E8%B6%85%E5%88%BB) |
 | PrecisionVolley | 技能 里 异火 红.png | [Wiki](https://wiki.biligame.com/zspms/%E9%87%8C%C2%B7%E5%BC%82%E7%81%AB) |
 | ThermalShot | 技能 里 异火 黄.png | [Wiki](https://wiki.biligame.com/zspms/%E9%87%8C%C2%B7%E5%BC%82%E7%81%AB) |
+
+## v0.10.0 日常与七实支援
+
+| 模型 | Wiki 图标 | 借用说明 |
+| --- | --- | --- |
+| LuciasCooking | [技能 露西亚 鸦羽 核心被动.png](https://wiki.biligame.com/zspms/%E9%9C%B2%E8%A5%BF%E4%BA%9A%C2%B7%E9%B8%A6%E7%BE%BD) | 料理彩蛋牌没有专属技能图标；借用鸦羽核心被动图标，不代表料理原作技能。 |
+| SeventyPercent | [技能 七实 脉冲 核心被动.png](https://wiki.biligame.com/zspms/七实·脉冲) | 抽卡谐音彩蛋牌；借用脉冲核心被动图标，不代表原作抽卡效果。 |
+| AllOutTogether | [技能 QTE.png](https://wiki.biligame.com/zspms/七实·遥星之座) | 遥星之座 QTE 天地鸣动使用的通用 QTE 图标；减防改编为原生易伤，非原作数值。 |

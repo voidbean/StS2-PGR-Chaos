@@ -13,7 +13,7 @@ func _initialize():
             quit(1)
             return
     var portraits = JSON.parse_string(FileAccess.get_file_as_string("res://ChaosPrototype/cards/sources.json"))
-    if not portraits is Array or portraits.size() != 53:
+    if not portraits is Array or portraits.size() != 56:
         push_error("Missing card portrait manifest")
         quit(1)
         return
@@ -52,5 +52,5 @@ func _initialize():
                 quit(1)
                 return
             node.free()
-    print("PASS: 53 Wiki card portraits, 7 HUD textures, 4 transparent character images and 10 character scenes loaded from isolated PCK")
+    print("PASS: 56 Wiki card portraits, 7 HUD textures, 4 transparent character images and 10 character scenes loaded from isolated PCK")
     quit(0)

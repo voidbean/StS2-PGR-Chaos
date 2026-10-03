@@ -422,5 +422,29 @@
     "wiki_file": "技能 里 异火 黄.png",
     "image_url": "https://patchwiki.biligame.com/images/zspms/thumb/1/12/cew4ceiqahyqjat7nfizdd7f7xf2756.png/70px-%E6%8A%80%E8%83%BD_%E9%87%8C_%E5%BC%82%E7%81%AB_%E9%BB%84.png",
     "note": ""
+  },
+  {
+    "card": "LuciasCooking",
+    "file": "LuciasCooking.png",
+    "wiki_page": "https://wiki.biligame.com/zspms/%E9%9C%B2%E8%A5%BF%E4%BA%9A%C2%B7%E9%B8%A6%E7%BE%BD",
+    "wiki_file": "技能 露西亚 鸦羽 核心被动.png",
+    "image_url": "https://patchwiki.biligame.com/images/zspms/4/4e/e47rhk0rphfcoegm8rjqc0ufp7t3txg.png",
+    "note": "料理彩蛋牌没有专属技能图标；借用鸦羽核心被动图标，不代表料理原作技能。"
+  },
+  {
+    "card": "SeventyPercent",
+    "file": "SeventyPercent.png",
+    "wiki_page": "https://wiki.biligame.com/zspms/七实·脉冲",
+    "wiki_file": "技能 七实 脉冲 核心被动.png",
+    "image_url": "https://patchwiki.biligame.com/images/zspms/5/59/rz830gmjg6us8bj7fae5mz5w2d9ze3x.png",
+    "note": "抽卡谐音彩蛋牌；借用脉冲核心被动图标，不代表原作抽卡效果。"
+  },
+  {
+    "card": "AllOutTogether",
+    "file": "AllOutTogether.png",
+    "wiki_page": "https://wiki.biligame.com/zspms/七实·遥星之座",
+    "wiki_file": "技能 QTE.png",
+    "image_url": "https://patchwiki.biligame.com/images/zspms/1/12/m0pfyupaddam6tgkks3mydd4riiwxul.png",
+    "note": "遥星之座 QTE 天地鸣动使用的通用 QTE 图标；减防改编为原生易伤，非原作数值。"
   }
 ]

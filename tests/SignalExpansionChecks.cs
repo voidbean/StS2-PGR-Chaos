@@ -48,7 +48,7 @@ static partial class HyperrealChecks
         check(models.Length == 16 && models.Count(c => c.Rarity == CardRarity.Common) == 5 && models.Count(c => c.Rarity == CardRarity.Uncommon) == 11, "sixteen expansion signals with five common and eleven uncommon");
         check(models.All(c => c.MaxUpgradeLevel == 0 && c.EnergyCost.Canonical == 1 && !c.CanonicalKeywords.Any()), "expansion has no invented upgrades, retain or exhaust");
         var all = typeof(ChaosCard).Assembly.GetTypes().Where(t => !t.IsAbstract && typeof(ChaosCard).IsAssignableFrom(t)).Select(t => (ChaosCard)(table.TryGetValue(ModelDb.GetId(t), out var known) ? known : (AbstractModel)Activator.CreateInstance(t)!)).ToArray();
-        check(all.Length == 53 && all.Count(c => c.Rarity == CardRarity.Token) == 3 && all.Count(c => c.Rarity == CardRarity.Basic) == 5, "fifty permanent cards plus three tokens; starter unchanged");
+        check(all.Length == 56 && all.Count(c => c.Rarity == CardRarity.Token) == 3 && all.Count(c => c.Rarity == CardRarity.Basic) == 5, "fifty-three permanent cards plus three tokens; starter unchanged");
         Console.WriteLine("Reward rarity counts: " + string.Join(", ", all.Where(c => c.Rarity != CardRarity.Token && c.Rarity != CardRarity.Basic).GroupBy(c => c.Rarity).Select(g => $"{g.Key}={g.Count()}")));
         harmony.Unpatch(AccessTools.Method(typeof(AttackCommand), "Execute"), AccessTools.Method(typeof(HyperrealChecks), nameof(CaptureAttack)));
         harmony.Patch(AccessTools.Method(typeof(AttackCommand), "Execute"), prefix: new HarmonyMethod(typeof(HyperrealChecks), nameof(ExpansionAttack)));
