@@ -14,7 +14,7 @@ namespace ChaosPrototype.Gameplay;
 
 public sealed class MoltenQuench() : ChaosCard(2, CardType.Skill, CardRarity.Rare, TargetType.Self)
 {
-    protected override string ArtName => "red";
+    protected override string ArtName => "cards/MoltenQuench.png";
     protected override IEnumerable<IHoverTip> ExtraHoverTips => [new HoverTip(new LocString("cards", Id.Entry + ".flavor"))];
     public override List<(string, string)> Localization => new CardLoc("熔金淬火", "获得超算与飞行。本回合后续 2 次手动三消效果结算后，各对所有敌人造成 4 点能力伤害。重复使用将剩余次数刷新为 2。\n飞行：直到下个自己的回合开始，受到的攻击伤害降低 50%，不叠加。", ("flavor", "汇聚，阳炎之光！"));
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
@@ -32,7 +32,7 @@ public sealed class MoltenQuench() : ChaosCard(2, CardType.Skill, CardRarity.Rar
 public sealed class CoordinatedSlash() : BurstCard(4, CardType.Attack, TargetType.AllEnemies)
 {
     public override int MaxUpgradeLevel => 0;
-    protected override string ArtName => "ultimate";
+    protected override string ArtName => "cards/CoordinatedSlash.png";
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(18, ValueProp.Move)];
     protected override IEnumerable<IHoverTip> ExtraHoverTips => [new HoverTip(new LocString("cards", Id.Entry + ".flavor"))];
     public override List<(string, string)> Localization => new CardLoc("协行锐斩", "保留。消耗 4 充能。对所有敌人造成 {Damage:diff()} 点伤害，然后获得飞行。不可自动打出。\n飞行：直到下个自己的回合开始，受到的攻击伤害降低 50%，不叠加。", ("flavor", "展翅翱翔吧"));
@@ -46,7 +46,7 @@ public sealed class CoordinatedSlash() : BurstCard(4, CardType.Attack, TargetTyp
 public sealed class EclipseDawn() : BurstCard(4, CardType.Attack, TargetType.AllEnemies)
 {
     public override int MaxUpgradeLevel => 0;
-    protected override string ArtName => "ultimate";
+    protected override string ArtName => "cards/EclipseDawn.png";
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(24, ValueProp.Move), new DamageVar("FlyingDamage", 32, ValueProp.Move)];
     protected override IEnumerable<IHoverTip> ExtraHoverTips => [new HoverTip(new LocString("cards", Id.Entry + ".flavor"))];
     public override List<(string, string)> Localization => new CardLoc("蚀日彻曙", "保留。消耗 4 充能。对所有敌人造成 {Damage:diff()} 点伤害；处于飞行时改为 {FlyingDamage:diff()} 点，结算后结束飞行。不可自动打出。", ("flavor", "越过迷雾与深渊！"));
@@ -62,7 +62,7 @@ public sealed class BlazingFeathers() : SignalCard(CardType.Attack, TargetType.A
 {
     public override int MaxUpgradeLevel => 0;
     public override SignalColor SignalColor => SignalColor.Yellow;
-    protected override string ArtName => "yellow";
+    protected override string ArtName => "cards/BlazingFeathers.png";
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(6, ValueProp.Move), new DamageVar("TripleDamage", 10, ValueProp.Move)];
     protected override IEnumerable<IHoverTip> ExtraHoverTips => [HoverTipFactory.FromCard<SoaringContinuation>()];
     public override List<(string, string)> Localization => new CardLoc("赫焰飞芒·黄", "誓焰 · 黄球\n造成 {Damage:diff()} 点伤害。三消：改为 {TripleDamage:diff()} 点伤害，生成一张飞光续斩。满手时放入弃牌堆；回合结束移除未使用的续斩。");
@@ -80,7 +80,7 @@ public sealed class BlazingFeathers() : SignalCard(CardType.Attack, TargetType.A
 public sealed class SoaringContinuation() : ChaosCard(0, CardType.Attack, CardRarity.Token, TargetType.AnyEnemy)
 {
     public override int MaxUpgradeLevel => 0;
-    protected override string ArtName => "red";
+    protected override string ArtName => "cards/SoaringContinuation.png";
     public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Exhaust];
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(4, ValueProp.Move)];
     protected override IEnumerable<IHoverTip> ExtraHoverTips => [new HoverTip(new LocString("cards", Id.Entry + ".flavor"))];
@@ -97,7 +97,7 @@ public sealed class FlowingThunder() : SignalCard(CardType.Skill, TargetType.Sel
 {
     public override int MaxUpgradeLevel => 0;
     public override SignalColor SignalColor => SignalColor.Blue;
-    protected override string ArtName => "blue";
+    protected override string ArtName => "cards/FlowingThunder.png";
     public override List<(string, string)> Localization => new CardLoc("流火鸣雷·蓝", "誓焰 · 蓝球\n获得飞行。三消：另获得 2 充能。\n飞行：直到下个自己的回合开始，受到的攻击伤害降低 50%，不叠加。");
     protected override async Task Effect(PlayerChoiceContext context, CardPlay play, int strength)
     {
@@ -111,7 +111,7 @@ public sealed class OmegaCore : ChaosCard
     public OmegaCore() : base(0, CardType.Power, CardRarity.Rare, TargetType.Self) => CustomResources<Charge>.SetCanonicalCost(this, 3);
     public override bool PreventAutoPlay => true;
     protected override bool IsPlayable => !IsMutable || Owner?.PlayerCombatState == null || !OathflameRuntime.Omega(Owner).Burned;
-    protected override string ArtName => "core";
+    protected override string ArtName => "cards/OmegaCore.png";
     protected override IEnumerable<IHoverTip> ExtraHoverTips => [HoverTipFactory.FromCard<CoreBurnout>(), new HoverTip(new LocString("cards", Id.Entry + ".flavor"))];
     public override List<(string, string)> Localization => new CardLoc("Ω 核心", "消耗 3 充能。从下个自己的回合起，每回合开始获得 1 能量、1 充能。持续效果不叠加。首次启动将一张核心燃尽随机放入本场抽牌堆。引爆后本场不可重启。不可自动打出。", ("flavor", "没关系，我能坚持下去，这副机体也能让我坚持下去"));
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
@@ -133,7 +133,7 @@ public sealed class CoreBurnout() : ChaosCard(0, CardType.Attack, CardRarity.Tok
     public override int MaxUpgradeLevel => 0;
     public override bool PreventAutoPlay => true;
     protected override bool IsPlayable => IsMutable && Owner?.PlayerCombatState != null && OathflameRuntime.CanBurn(Owner);
-    protected override string ArtName => "ultimate";
+    protected override string ArtName => "cards/CoreBurnout.png";
     public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Exhaust];
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(40, ValueProp.Move)];
     protected override IEnumerable<IHoverTip> ExtraHoverTips => [new HoverTip(new LocString("cards", Id.Entry + ".flavor"))];

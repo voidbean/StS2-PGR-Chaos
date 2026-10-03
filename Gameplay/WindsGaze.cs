@@ -13,7 +13,7 @@ namespace ChaosPrototype.Gameplay;
 public sealed class WindsGaze() : ChaosCard(1, CardType.Skill, CardRarity.Rare, TargetType.Self)
 {
     public override int MaxUpgradeLevel => 0;
-    protected override string ArtName => "super";
+    protected override string ArtName => "cards/WindsGaze.png";
     public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Ethereal, CardKeyword.Exhaust];
     protected override IEnumerable<IHoverTip> ExtraHoverTips => [new HoverTip(new LocString("cards", Id.Entry + ".flavor"))];
     public override List<(string, string)> Localization => new CardLoc("风的视线",

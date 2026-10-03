@@ -1,0 +1,298 @@
+[
+  {
+    "card": "RedSignal",
+    "file": "RedSignal.png",
+    "wiki_page": "https://wiki.biligame.com/zspms/%E9%9C%B2%E8%A5%BF%E4%BA%9A%C2%B7%E9%B8%A6%E7%BE%BD",
+    "wiki_file": "技能 露西亚 鸦羽 红.png",
+    "image_url": "https://patchwiki.biligame.com/images/zspms/9/9b/omwrpw7i23c05mrjb502l3y937weuk0.png",
+    "note": ""
+  },
+  {
+    "card": "YellowSignal",
+    "file": "YellowSignal.png",
+    "wiki_page": "https://wiki.biligame.com/zspms/%E9%9C%B2%E8%A5%BF%E4%BA%9A%C2%B7%E9%B8%A6%E7%BE%BD",
+    "wiki_file": "技能 露西亚 鸦羽 黄.png",
+    "image_url": "https://patchwiki.biligame.com/images/zspms/5/51/1kuu3933ugph64jqxm777clhbmpafvu.png",
+    "note": ""
+  },
+  {
+    "card": "BlueSignal",
+    "file": "BlueSignal.png",
+    "wiki_page": "https://wiki.biligame.com/zspms/%E9%9C%B2%E8%A5%BF%E4%BA%9A%C2%B7%E9%B8%A6%E7%BE%BD",
+    "wiki_file": "技能 露西亚 鸦羽 蓝.png",
+    "image_url": "https://patchwiki.biligame.com/images/zspms/d/d3/fuj3nkajaoss6d0on4joozysrkfa7ji.png",
+    "note": ""
+  },
+  {
+    "card": "FrostBlade",
+    "file": "FrostBlade.png",
+    "wiki_page": "https://wiki.biligame.com/zspms/%E9%9C%B2%E8%A5%BF%E4%BA%9A%C2%B7%E9%B8%A6%E7%BE%BD",
+    "wiki_file": "技能 露西亚 鸦羽 红.png",
+    "image_url": "https://patchwiki.biligame.com/images/zspms/9/9b/omwrpw7i23c05mrjb502l3y937weuk0.png",
+    "note": ""
+  },
+  {
+    "card": "GlacialForm",
+    "file": "GlacialForm.png",
+    "wiki_page": "https://wiki.biligame.com/zspms/%E9%9C%B2%E8%A5%BF%E4%BA%9A%C2%B7%E9%B8%A6%E7%BE%BD",
+    "wiki_file": "技能 露西亚 鸦羽 必杀.png",
+    "image_url": "https://patchwiki.biligame.com/images/zspms/5/5b/s6srnz2hwwi56zlgo2hcex1bbvobjb9.png",
+    "note": ""
+  },
+  {
+    "card": "GlacialBloom",
+    "file": "GlacialBloom.png",
+    "wiki_page": "https://wiki.biligame.com/zspms/%E9%9C%B2%E8%A5%BF%E4%BA%9A%C2%B7%E9%B8%A6%E7%BE%BD",
+    "wiki_file": "技能 露西亚 鸦羽 必杀.png",
+    "image_url": "https://patchwiki.biligame.com/images/zspms/5/5b/s6srnz2hwwi56zlgo2hcex1bbvobjb9.png",
+    "note": ""
+  },
+  {
+    "card": "SupercomputeCard",
+    "file": "SupercomputeCard.png",
+    "wiki_page": "https://wiki.biligame.com/zspms/%E9%9C%B2%E8%A5%BF%E4%BA%9A%C2%B7%E9%B8%A6%E7%BE%BD",
+    "wiki_file": "技能 露西亚 鸦羽 核心被动.png",
+    "image_url": "https://patchwiki.biligame.com/images/zspms/4/4e/e47rhk0rphfcoegm8rjqc0ufp7t3txg.png",
+    "note": "通用机制／彩蛋没有专属技能图标，暂借鸦羽核心被动图标"
+  },
+  {
+    "card": "PerfectDodge",
+    "file": "PerfectDodge.png",
+    "wiki_page": "https://wiki.biligame.com/zspms/%E9%9C%B2%E8%A5%BF%E4%BA%9A%C2%B7%E9%B8%A6%E7%BE%BD",
+    "wiki_file": "技能 露西亚 鸦羽 核心被动.png",
+    "image_url": "https://patchwiki.biligame.com/images/zspms/4/4e/e47rhk0rphfcoegm8rjqc0ufp7t3txg.png",
+    "note": "通用机制／彩蛋没有专属技能图标，暂借鸦羽核心被动图标"
+  },
+  {
+    "card": "Ultimate",
+    "file": "Ultimate.png",
+    "wiki_page": "https://wiki.biligame.com/zspms/%E9%9C%B2%E8%A5%BF%E4%BA%9A%C2%B7%E9%B8%A6%E7%BE%BD",
+    "wiki_file": "技能 露西亚 鸦羽 必杀.png",
+    "image_url": "https://patchwiki.biligame.com/images/zspms/5/5b/s6srnz2hwwi56zlgo2hcex1bbvobjb9.png",
+    "note": "基础爆发暂借鸦羽必杀图标"
+  },
+  {
+    "card": "WindsGaze",
+    "file": "WindsGaze.png",
+    "wiki_page": "https://wiki.biligame.com/zspms/%E9%9C%B2%E8%A5%BF%E4%BA%9A%C2%B7%E9%B8%A6%E7%BE%BD",
+    "wiki_file": "技能 露西亚 鸦羽 核心被动.png",
+    "image_url": "https://patchwiki.biligame.com/images/zspms/4/4e/e47rhk0rphfcoegm8rjqc0ufp7t3txg.png",
+    "note": "通用机制／彩蛋没有专属技能图标，暂借鸦羽核心被动图标"
+  },
+  {
+    "card": "RepulsiveBeam",
+    "file": "RepulsiveBeam.png",
+    "wiki_page": "https://wiki.biligame.com/zspms/%E4%B8%BD%E8%8A%99%C2%B7%E4%BB%B0%E5%85%89",
+    "wiki_file": "技能 丽芙 仰光 红.png",
+    "image_url": "https://patchwiki.biligame.com/images/zspms/6/67/pyzsaz0ewkevyi5h8qdba4c6duy8uyc.png",
+    "note": ""
+  },
+  {
+    "card": "GoddessConnection",
+    "file": "GoddessConnection.png",
+    "wiki_page": "https://wiki.biligame.com/zspms/%E4%B8%BD%E8%8A%99%C2%B7%E4%BB%B0%E5%85%89",
+    "wiki_file": "技能 丽芙 仰光 核心被动.png",
+    "image_url": "https://patchwiki.biligame.com/images/zspms/7/7c/1je4uaegug9a1vlcqd9ghu1mvp0h5sv.png",
+    "note": ""
+  },
+  {
+    "card": "ArcadiaGate",
+    "file": "ArcadiaGate.png",
+    "wiki_page": "https://wiki.biligame.com/zspms/%E4%B8%BD%E8%8A%99%C2%B7%E4%BB%B0%E5%85%89",
+    "wiki_file": "技能 丽芙 仰光 必杀.png",
+    "image_url": "https://patchwiki.biligame.com/images/zspms/8/84/mxbjmj0v6yrnnycoo2kvw5tosiy0v2d.png",
+    "note": ""
+  },
+  {
+    "card": "RetreatShot",
+    "file": "RetreatShot.png",
+    "wiki_page": "https://wiki.biligame.com/zspms/%E9%87%8C%C2%B7%E4%B9%B1%E6%95%B0",
+    "wiki_file": "技能 里 乱数 黄.png",
+    "image_url": "https://patchwiki.biligame.com/images/zspms/5/5a/5zxzjsivtxmwddvnz6wh18zqrak05gz.png",
+    "note": ""
+  },
+  {
+    "card": "TacticalCalculation",
+    "file": "TacticalCalculation.png",
+    "wiki_page": "https://wiki.biligame.com/zspms/%E9%87%8C%C2%B7%E4%B9%B1%E6%95%B0",
+    "wiki_file": "技能 里 乱数 核心被动.png",
+    "image_url": "https://patchwiki.biligame.com/images/zspms/e/ed/59pfry5py2bygawn7mcx57116rtyma8.png",
+    "note": ""
+  },
+  {
+    "card": "OrbitalStrike",
+    "file": "OrbitalStrike.png",
+    "wiki_page": "https://wiki.biligame.com/zspms/%E9%87%8C%C2%B7%E4%B9%B1%E6%95%B0",
+    "wiki_file": "技能 里 乱数 必杀.png",
+    "image_url": "https://patchwiki.biligame.com/images/zspms/9/90/kglm9bllvijblhzbii10dn3be3rp558.png",
+    "note": ""
+  },
+  {
+    "card": "SwiftAssault",
+    "file": "SwiftAssault.png",
+    "wiki_page": "https://wiki.biligame.com/zspms/%E9%87%8C%C2%B7%E8%B6%85%E5%88%BB",
+    "wiki_file": "技能 里 超刻 红.png",
+    "image_url": "https://patchwiki.biligame.com/images/zspms/a/a9/mmx5wq45qeanvzpzv7b6etn3euk4iau.png",
+    "note": ""
+  },
+  {
+    "card": "HyperdimensionalSpace",
+    "file": "HyperdimensionalSpace.png",
+    "wiki_page": "https://wiki.biligame.com/zspms/%E9%87%8C%C2%B7%E8%B6%85%E5%88%BB",
+    "wiki_file": "技能 里 超刻 核心被动.png",
+    "image_url": "https://patchwiki.biligame.com/images/zspms/9/9f/0xyj6dxfaiwm9g7lbqa3tasayv9kx9u.png",
+    "note": ""
+  },
+  {
+    "card": "CausalConvergence",
+    "file": "CausalConvergence.png",
+    "wiki_page": "https://wiki.biligame.com/zspms/%E9%87%8C%C2%B7%E8%B6%85%E5%88%BB",
+    "wiki_file": "技能 里 超刻 普攻.png",
+    "image_url": "https://patchwiki.biligame.com/images/zspms/1/12/nyzdibot5utjb2pvvuohvk84y28z9yn.png",
+    "note": ""
+  },
+  {
+    "card": "TemporalFinality",
+    "file": "TemporalFinality.png",
+    "wiki_page": "https://wiki.biligame.com/zspms/%E9%87%8C%C2%B7%E8%B6%85%E5%88%BB",
+    "wiki_file": "技能 里 超刻 必杀.png",
+    "image_url": "https://patchwiki.biligame.com/images/zspms/f/ff/tk853vaqac48hyiyom873mkr5ilf0xn.png",
+    "note": ""
+  },
+  {
+    "card": "RealmTraversal",
+    "file": "RealmTraversal.png",
+    "wiki_page": "https://wiki.biligame.com/zspms/%E9%87%8C%C2%B7%E8%B6%85%E5%88%BB",
+    "wiki_file": "技能 里 超刻 核心被动.png",
+    "image_url": "https://patchwiki.biligame.com/images/zspms/9/9f/0xyj6dxfaiwm9g7lbqa3tasayv9kx9u.png",
+    "note": ""
+  },
+  {
+    "card": "MoltenQuench",
+    "file": "MoltenQuench.png",
+    "wiki_page": "https://wiki.biligame.com/zspms/%E9%9C%B2%E8%A5%BF%E4%BA%9A%C2%B7%E8%AA%93%E7%84%B0",
+    "wiki_file": "技能 露西亚 誓焰 核心被动.png",
+    "image_url": "https://patchwiki.biligame.com/images/zspms/b/bb/tbr7qw4ooxwdhxpkwnj4iui43giyowc.png",
+    "note": ""
+  },
+  {
+    "card": "CoordinatedSlash",
+    "file": "CoordinatedSlash.png",
+    "wiki_page": "https://wiki.biligame.com/zspms/%E9%9C%B2%E8%A5%BF%E4%BA%9A%C2%B7%E8%AA%93%E7%84%B0",
+    "wiki_file": "技能 露西亚 誓焰 必杀.png",
+    "image_url": "https://patchwiki.biligame.com/images/zspms/6/66/exqk6bu6qrp66a4xpvijy40ey3g01co.png",
+    "note": ""
+  },
+  {
+    "card": "EclipseDawn",
+    "file": "EclipseDawn.png",
+    "wiki_page": "https://wiki.biligame.com/zspms/%E9%9C%B2%E8%A5%BF%E4%BA%9A%C2%B7%E8%AA%93%E7%84%B0",
+    "wiki_file": "技能 露西亚 誓焰 必杀.png",
+    "image_url": "https://patchwiki.biligame.com/images/zspms/6/66/exqk6bu6qrp66a4xpvijy40ey3g01co.png",
+    "note": ""
+  },
+  {
+    "card": "BlazingFeathers",
+    "file": "BlazingFeathers.png",
+    "wiki_page": "https://wiki.biligame.com/zspms/%E9%9C%B2%E8%A5%BF%E4%BA%9A%C2%B7%E8%AA%93%E7%84%B0",
+    "wiki_file": "技能 露西亚 誓焰 黄.png",
+    "image_url": "https://patchwiki.biligame.com/images/zspms/9/9d/7b6tx4rme5c9esqvdc0dywwsa43p21n.png",
+    "note": ""
+  },
+  {
+    "card": "SoaringContinuation",
+    "file": "SoaringContinuation.png",
+    "wiki_page": "https://wiki.biligame.com/zspms/%E9%9C%B2%E8%A5%BF%E4%BA%9A%C2%B7%E8%AA%93%E7%84%B0",
+    "wiki_file": "技能 露西亚 誓焰 普攻.png",
+    "image_url": "https://patchwiki.biligame.com/images/zspms/b/b3/ax01hza4vnq5tu1eobbirqbkerb96hs.png",
+    "note": ""
+  },
+  {
+    "card": "FlowingThunder",
+    "file": "FlowingThunder.png",
+    "wiki_page": "https://wiki.biligame.com/zspms/%E9%9C%B2%E8%A5%BF%E4%BA%9A%C2%B7%E8%AA%93%E7%84%B0",
+    "wiki_file": "技能 露西亚 誓焰 蓝.png",
+    "image_url": "https://patchwiki.biligame.com/images/zspms/7/7c/rpkbrgtn5fzm84qjlxdzij1q8py0rk1.png",
+    "note": ""
+  },
+  {
+    "card": "OmegaCore",
+    "file": "OmegaCore.png",
+    "wiki_page": "https://wiki.biligame.com/zspms/%E9%9C%B2%E8%A5%BF%E4%BA%9A%C2%B7%E8%AA%93%E7%84%B0",
+    "wiki_file": "技能 露西亚 誓焰 核心被动.png",
+    "image_url": "https://patchwiki.biligame.com/images/zspms/b/bb/tbr7qw4ooxwdhxpkwnj4iui43giyowc.png",
+    "note": ""
+  },
+  {
+    "card": "CoreBurnout",
+    "file": "CoreBurnout.png",
+    "wiki_page": "https://wiki.biligame.com/zspms/%E9%9C%B2%E8%A5%BF%E4%BA%9A%C2%B7%E8%AA%93%E7%84%B0",
+    "wiki_file": "技能 露西亚 誓焰 核心被动.png",
+    "image_url": "https://patchwiki.biligame.com/images/zspms/b/bb/tbr7qw4ooxwdhxpkwnj4iui43giyowc.png",
+    "note": ""
+  },
+  {
+    "card": "HymnPrayer",
+    "file": "HymnPrayer.png",
+    "wiki_page": "https://wiki.biligame.com/zspms/%E4%B8%BD%E8%8A%99%C2%B7%E6%9E%81%E6%98%BC",
+    "wiki_file": "技能 丽芙 极昼 核心被动.png",
+    "image_url": "https://patchwiki.biligame.com/images/zspms/d/d6/5nr0el889c0k3w1hvkqldh4xwqfyo41.png",
+    "note": ""
+  },
+  {
+    "card": "FeatherMass",
+    "file": "FeatherMass.png",
+    "wiki_page": "https://wiki.biligame.com/zspms/%E4%B8%BD%E8%8A%99%C2%B7%E6%9E%81%E6%98%BC",
+    "wiki_file": "技能 丽芙 极昼 黄.png",
+    "image_url": "https://patchwiki.biligame.com/images/zspms/3/3e/fx7foyvhr9m2jkbgisg81r7xtmsquy2.png",
+    "note": ""
+  },
+  {
+    "card": "FadingGospel",
+    "file": "FadingGospel.png",
+    "wiki_page": "https://wiki.biligame.com/zspms/%E4%B8%BD%E8%8A%99%C2%B7%E6%9E%81%E6%98%BC",
+    "wiki_file": "技能 丽芙 极昼 蓝.png",
+    "image_url": "https://patchwiki.biligame.com/images/zspms/7/71/1md5b6qoukrjtuhaqc6xga0499aafui.png",
+    "note": ""
+  },
+  {
+    "card": "GarlandsSea",
+    "file": "GarlandsSea.png",
+    "wiki_page": "https://wiki.biligame.com/zspms/%E4%B8%BD%E8%8A%99%C2%B7%E6%9E%81%E6%98%BC",
+    "wiki_file": "技能 丽芙 极昼 必杀.png",
+    "image_url": "https://patchwiki.biligame.com/images/zspms/e/ee/s9l26alzhbpxkm1qgxi1cuadwx9ae3s.png",
+    "note": ""
+  },
+  {
+    "card": "RadiantCeremony",
+    "file": "RadiantCeremony.png",
+    "wiki_page": "https://wiki.biligame.com/zspms/%E4%B8%BD%E8%8A%99%C2%B7%E6%9E%81%E6%98%BC",
+    "wiki_file": "技能 丽芙 极昼 普攻.png",
+    "image_url": "https://patchwiki.biligame.com/images/zspms/8/85/pu33dz2lb31m29vax85yn47ivu0pbks.png",
+    "note": ""
+  },
+  {
+    "card": "DeadlineTimer",
+    "file": "DeadlineTimer.png",
+    "wiki_page": "https://wiki.biligame.com/zspms/%E6%AD%A6%E5%99%A8%E5%85%B1%E9%B8%A3",
+    "wiki_file": "词条 武器共鸣 死线计时.png",
+    "image_url": "https://patchwiki.biligame.com/images/zspms/1/16/n9e9ebkpt0gs8l59jbcui23iprq2r8g.png",
+    "note": ""
+  },
+  {
+    "card": "GloriousAfterglow",
+    "file": "GloriousAfterglow.png",
+    "wiki_page": "https://wiki.biligame.com/zspms/%E6%AD%A6%E5%99%A8%E5%85%B1%E9%B8%A3",
+    "wiki_file": "词条 武器共鸣 光耀余晖.png",
+    "image_url": "https://patchwiki.biligame.com/images/zspms/b/b6/k6emzw7n93cqq7apf7g3jn36g7iajzn.png",
+    "note": ""
+  },
+  {
+    "card": "SupercomputeLightning",
+    "file": "SupercomputeLightning.png",
+    "wiki_page": "https://wiki.biligame.com/zspms/%E6%AD%A6%E5%99%A8%E5%85%B1%E9%B8%A3",
+    "wiki_file": "词条 武器共鸣 超算闪电.png",
+    "image_url": "https://patchwiki.biligame.com/images/zspms/c/c5/6mifsxxwgrs9jjze4sntevoyfxxfidu.png",
+    "note": ""
+  }
+]

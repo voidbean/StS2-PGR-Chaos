@@ -12,6 +12,17 @@ func _initialize():
             push_error("Missing or invalid placeholder texture: " + key)
             quit(1)
             return
+    var portraits = JSON.parse_string(FileAccess.get_file_as_string("res://ChaosPrototype/cards/sources.json"))
+    if not portraits is Array or portraits.size() != 37:
+        push_error("Missing card portrait manifest")
+        quit(1)
+        return
+    for portrait in portraits:
+        var texture = ResourceLoader.load("res://ChaosPrototype/cards/" + portrait["file"])
+        if not texture is Texture2D or texture.get_width() != 500 or texture.get_height() != 380:
+            push_error("Missing or invalid card portrait: " + portrait["card"])
+            quit(1)
+            return
     for skin in ["normal", "fusion"]:
         for key in ["standing", "portrait"]:
             var texture = load("res://ChaosPrototype/character/" + skin + "/" + key + ".png") as Texture2D
@@ -41,5 +52,5 @@ func _initialize():
                 quit(1)
                 return
             node.free()
-    print("PASS: 7 card textures, 4 transparent character images and 10 character scenes loaded from isolated PCK")
+    print("PASS: 37 Wiki card portraits, 7 HUD textures, 4 transparent character images and 10 character scenes loaded from isolated PCK")
     quit(0)
