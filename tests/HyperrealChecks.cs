@@ -218,6 +218,7 @@ static partial class HyperrealChecks
             await RunEmpyrea(check, player, combat, target, powers, harmony);
             await RunExpansion(check, player, combat, target, powers, harmony);
             await RunEveryday(check, player, combat, target, powers, harmony);
+            await RunInverseCrown(check, player, combat, target, powers, harmony);
             AccessTools.Method(runtime, "Reset").Invoke(null, null);
         }
         finally { harmony.UnpatchAll(harmony.Id); progress.SetValue(CombatManager.Instance, wasInProgress); }

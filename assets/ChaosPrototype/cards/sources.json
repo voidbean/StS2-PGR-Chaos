@@ -446,5 +446,45 @@
     "wiki_file": "技能 QTE.png",
     "image_url": "https://patchwiki.biligame.com/images/zspms/1/12/m0pfyupaddam6tgkks3mydd4riiwxul.png",
     "note": "遥星之座 QTE 天地鸣动使用的通用 QTE 图标；减防改编为原生易伤，非原作数值。"
+  },
+  {
+    "card": "Crown",
+    "file": "Crown.png",
+    "wiki_page": "https://wiki.biligame.com/zspms/露西亚·逆冕",
+    "wiki_file": "技能 露西亚 逆冕 核心被动.png",
+    "image_url": "https://patchwiki.biligame.com/images/zspms/7/73/501xusbio3paggra289n5egyusw02k2.png",
+    "note": "剧情质点没有独立技能图标；借用逆冕核心被动图标，不代表质点专属技能。"
+  },
+  {
+    "card": "Atheism",
+    "file": "Atheism.png",
+    "wiki_page": "https://wiki.biligame.com/zspms/露西亚·逆冕",
+    "wiki_file": "技能 露西亚 逆冕 核心被动.png",
+    "image_url": "https://patchwiki.biligame.com/images/zspms/7/73/501xusbio3paggra289n5egyusw02k2.png",
+    "note": "剧情质点没有独立技能图标；借用逆冕核心被动图标，不代表质点专属技能。"
+  },
+  {
+    "card": "LightlessAbyss",
+    "file": "LightlessAbyss.png",
+    "wiki_page": "https://wiki.biligame.com/zspms/露西亚·逆冕",
+    "wiki_file": "技能 露西亚 逆冕 必杀.png",
+    "image_url": "https://patchwiki.biligame.com/images/zspms/2/2c/5yhu4pjbhlafbdektgdx0zfmjfztu8h.png",
+    "note": "诸光尽默之渊及其万劫／断念模式使用同一原作必杀图标；选项仅用于模式界面。"
+  },
+  {
+    "card": "MyriadCalamitiesChoice",
+    "file": "MyriadCalamitiesChoice.png",
+    "wiki_page": "https://wiki.biligame.com/zspms/露西亚·逆冕",
+    "wiki_file": "技能 露西亚 逆冕 必杀.png",
+    "image_url": "https://patchwiki.biligame.com/images/zspms/2/2c/5yhu4pjbhlafbdektgdx0zfmjfztu8h.png",
+    "note": "诸光尽默之渊及其万劫／断念模式使用同一原作必杀图标；选项仅用于模式界面。"
+  },
+  {
+    "card": "SeveranceChoice",
+    "file": "SeveranceChoice.png",
+    "wiki_page": "https://wiki.biligame.com/zspms/露西亚·逆冕",
+    "wiki_file": "技能 露西亚 逆冕 必杀.png",
+    "image_url": "https://patchwiki.biligame.com/images/zspms/2/2c/5yhu4pjbhlafbdektgdx0zfmjfztu8h.png",
+    "note": "诸光尽默之渊及其万劫／断念模式使用同一原作必杀图标；选项仅用于模式界面。"
   }
 ]

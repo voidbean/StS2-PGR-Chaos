@@ -74,3 +74,15 @@
 | LuciasCooking | [技能 露西亚 鸦羽 核心被动.png](https://wiki.biligame.com/zspms/%E9%9C%B2%E8%A5%BF%E4%BA%9A%C2%B7%E9%B8%A6%E7%BE%BD) | 料理彩蛋牌没有专属技能图标；借用鸦羽核心被动图标，不代表料理原作技能。 |
 | SeventyPercent | [技能 七实 脉冲 核心被动.png](https://wiki.biligame.com/zspms/七实·脉冲) | 抽卡谐音彩蛋牌；借用脉冲核心被动图标，不代表原作抽卡效果。 |
 | AllOutTogether | [技能 QTE.png](https://wiki.biligame.com/zspms/七实·遥星之座) | 遥星之座 QTE 天地鸣动使用的通用 QTE 图标；减防改编为原生易伤，非原作数值。 |
+
+## v0.11.0 逆冕与质点能力
+
+王冠／无神论借用逆冕核心被动图标，并非质点专属图标。大招与两个模式选项共用原作必杀来源，各有独立可替换 PNG。模式选项不进入卡池。
+
+| 模型 | 原作图标 | 来源 |
+| --- | --- | --- |
+| Crown | 技能 露西亚 逆冕 核心被动.png | [Wiki](https://wiki.biligame.com/zspms/露西亚·逆冕) |
+| Atheism | 技能 露西亚 逆冕 核心被动.png | [Wiki](https://wiki.biligame.com/zspms/露西亚·逆冕) |
+| LightlessAbyss | 技能 露西亚 逆冕 必杀.png | [Wiki](https://wiki.biligame.com/zspms/露西亚·逆冕) |
+| MyriadCalamitiesChoice | 技能 露西亚 逆冕 必杀.png | [Wiki](https://wiki.biligame.com/zspms/露西亚·逆冕) |
+| SeveranceChoice | 技能 露西亚 逆冕 必杀.png | [Wiki](https://wiki.biligame.com/zspms/露西亚·逆冕) |
