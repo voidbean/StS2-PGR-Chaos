@@ -33,7 +33,7 @@ static partial class HyperrealChecks
         ChaosCard[] cards = [new LuciasCooking(), new SeventyPercent(), new AllOutTogether()];
         var table = (Dictionary<ModelId, AbstractModel>)AccessTools.Field(typeof(ModelDb), "_contentById").GetValue(null)!;
         foreach (var model in cards.Cast<AbstractModel>().Append(new Dazed())) table[ModelDb.GetId(model.GetType())] = model;
-        check(cards.All(c => c is not SignalCard && c.EnergyCost.Canonical == 1 && c.MaxUpgradeLevel == 0), "three one-cost non-signal rewards without upgrades");
+        check(cards.All(c => c is not SignalCard && c.EnergyCost.Canonical == 1 && c.MaxUpgradeLevel == 1), "three one-cost non-signal rewards support upgrades");
         check(cards.Select(c => c.Rarity).SequenceEqual(new[] { CardRarity.Uncommon, CardRarity.Common, CardRarity.Uncommon }), "everyday rarity distribution");
         check(cards[0].CanonicalKeywords.Contains(CardKeyword.Exhaust) && cards.Skip(1).All(c => !c.CanonicalKeywords.Any()), "only cooking exhausts");
         harmony.Unpatch(AccessTools.Method(typeof(PlayerCmd), "GainEnergy"), AccessTools.Method(typeof(HyperrealChecks), nameof(GainEnergy)));

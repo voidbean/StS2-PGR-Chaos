@@ -12,7 +12,6 @@ namespace ChaosPrototype.Gameplay;
 
 public sealed class LuciasCooking() : ChaosCard(1, CardType.Skill, CardRarity.Uncommon, TargetType.Self)
 {
-    public override int MaxUpgradeLevel => 0;
     protected override string ArtName => "cards/LuciasCooking.png";
     public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Exhaust];
     protected override IEnumerable<DynamicVar> CanonicalVars => [new EnergyVar(2)];
@@ -28,11 +27,11 @@ public sealed class LuciasCooking() : ChaosCard(1, CardType.Skill, CardRarity.Un
         var dazed = Owner.Creature.CombatState!.CreateCard<Dazed>(Owner);
         await CardPileCmd.AddGeneratedCardsToCombat([dazed], PileType.Discard, Owner);
     }
+    protected override void OnUpgrade() { DynamicVars["Energy"].UpgradeValueBy(1); }
 }
 
 public sealed class SeventyPercent() : ChaosCard(1, CardType.Skill, CardRarity.Common, TargetType.Self)
 {
-    public override int MaxUpgradeLevel => 0;
     protected override string ArtName => "cards/SeventyPercent.png";
     protected override IEnumerable<DynamicVar> CanonicalVars => [new BlockVar(7, ValueProp.Move)];
     public override List<(string, string)> Localization => new CardLoc("百分之七十",
@@ -49,16 +48,16 @@ public sealed class SeventyPercent() : ChaosCard(1, CardType.Skill, CardRarity.C
         else
             await CreatureCmd.GainBlock(Owner.Creature, DynamicVars.Block.BaseValue, ValueProp.Move, play);
     }
+    protected override void OnUpgrade() { DynamicVars["Block"].UpgradeValueBy(3); }
 }
 
 public sealed class AllOutTogether() : ChaosCard(1, CardType.Skill, CardRarity.Uncommon, TargetType.AllEnemies)
 {
-    public override int MaxUpgradeLevel => 0;
     protected override string ArtName => "cards/AllOutTogether.png";
     protected override IEnumerable<DynamicVar> CanonicalVars => [new PowerVar<VulnerablePower>(2)];
     protected override IEnumerable<IHoverTip> ExtraHoverTips => [HoverTipFactory.FromPower<VulnerablePower>()];
     public override List<(string, string)> Localization => new CardLoc("一口气上吧",
-        "对所有敌人施加 {Vulnerable:diff()} 层易伤。");
+        "对所有敌人施加 {VulnerablePower:diff()} 层易伤。");
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
@@ -70,4 +69,5 @@ public sealed class AllOutTogether() : ChaosCard(1, CardType.Skill, CardRarity.U
                 await PowerCmd.Apply<VulnerablePower>(context, enemy, DynamicVars.Vulnerable.BaseValue, Owner.Creature, this);
         }
     }
+    protected override void OnUpgrade() => DynamicVars.Vulnerable.UpgradeValueBy(1);
 }

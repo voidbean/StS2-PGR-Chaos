@@ -14,7 +14,6 @@ namespace ChaosPrototype.Gameplay;
 
 public sealed class SwiftAssault() : SignalCard(CardType.Attack, TargetType.AnyEnemy)
 {
-    public override int MaxUpgradeLevel => 0;
     public override SignalColor SignalColor => SignalColor.Red;
     protected override string ArtName => "cards/SwiftAssault.png";
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(7, ValueProp.Move), new DamageVar("FollowupDamage", 3, ValueProp.Move)];
@@ -25,11 +24,11 @@ public sealed class SwiftAssault() : SignalCard(CardType.Attack, TargetType.AnyE
         if (strength == 3 && play.Target!.IsAlive && Owner.Creature.IsAlive && !CombatManager.Instance.IsOverOrEnding)
             await DamageCmd.Attack(DynamicVars["FollowupDamage"].BaseValue).FromCard(this).Targeting(play.Target).WithHitCount(3).Execute(context);
     }
+    protected override void OnUpgrade() { DynamicVars["Damage"].UpgradeValueBy(3); }
 }
 
 public sealed class HyperdimensionalSpace() : ChaosCard(2, CardType.Power, CardRarity.Rare, TargetType.Self)
 {
-    public override int MaxUpgradeLevel => 0;
     protected override string ArtName => "cards/HyperdimensionalSpace.png";
     protected override IEnumerable<IHoverTip> ExtraHoverTips => [HoverTipFactory.FromCard<RealmTraversal>(), new HoverTip(new LocString("cards", Id.Entry + ".flavor"))];
     public override List<(string, string)> Localization => new CardLoc("超维空间", "生成一张现界穿越，满手时放入弃牌堆。此后每次手动三消效果结算后获得 1 视点（超算也可触发）。每满 3 点扣除 3 点，对所有敌人造成 10 点能力伤害。\n视点跨回合保留，重放不重复累计。能力不叠加；重复打出仍生成现界穿越。", ("flavor", "你们的时间，由我掌控！"));
@@ -41,11 +40,11 @@ public sealed class HyperdimensionalSpace() : ChaosCard(2, CardType.Power, CardR
         if (CombatManager.Instance.IsOverOrEnding || !Owner.Creature.IsAlive) return;
         await CardPileCmd.AddGeneratedCardsToCombat([CombatState!.CreateCard<RealmTraversal>(Owner)], PileType.Hand, Owner);
     }
+    protected override void OnUpgrade() { EnergyCost.UpgradeBy(-1); }
 }
 
 public sealed class CausalConvergence() : ChaosCard(1, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy)
 {
-    public override int MaxUpgradeLevel => 0;
     protected override string ArtName => "cards/CausalConvergence.png";
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(6, ValueProp.Move)];
     public override List<(string, string)> Localization => new CardLoc("因果收束", "造成 {Damage:diff()} 点伤害。选择红色或黄色，在球区右端生成 2 张该颜色的临时基础信号球。\n临时球仍为 1 费，打出后消耗，弃置或回合结束时移除；满手停止生成。");
@@ -58,17 +57,18 @@ public sealed class CausalConvergence() : ChaosCard(1, CardType.Attack, CardRari
         if (chosen is SignalCard signal)
             await TemporarySignals.Generate(context, Owner, 2, _ => signal.SignalColor);
     }
+    protected override void OnUpgrade() { DynamicVars["Damage"].UpgradeValueBy(3); }
 }
 
 public sealed class TemporalFinality() : BurstCard(4, CardType.Attack, TargetType.AllEnemies)
 {
-    public override int MaxUpgradeLevel => 0;
     protected override string ArtName => "cards/TemporalFinality.png";
     protected override IEnumerable<IHoverTip> ExtraHoverTips => [new HoverTip(new LocString("cards", Id.Entry + ".flavor"))];
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(26, ValueProp.Move)];
     public override List<(string, string)> Localization => new CardLoc("时序终焉", "超刻 · 大招\n保留。消耗 4 充能。对所有敌人造成 {Damage:diff()} 点伤害。不可自动打出。", ("flavor", "在时间的尽头……湮灭吧！"));
     protected override async Task BurstEffect(PlayerChoiceContext context, CardPlay play) =>
         await DamageCmd.Attack(DynamicVars["Damage"].BaseValue).FromCard(this).TargetingAllOpponents(CombatState!).Execute(context);
+    protected override void OnUpgrade() { DynamicVars["Damage"].UpgradeValueBy(8); }
 }
 
 public sealed class RealmTraversal() : ChaosCard(0, CardType.Skill, CardRarity.Token, TargetType.Self)

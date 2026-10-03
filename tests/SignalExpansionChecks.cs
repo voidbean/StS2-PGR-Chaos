@@ -46,7 +46,7 @@ static partial class HyperrealChecks
         var table = (Dictionary<ModelId, AbstractModel>)AccessTools.Field(typeof(ModelDb), "_contentById").GetValue(null)!;
         foreach (var model in models.Cast<AbstractModel>().Concat([new SignalSupportPower(), new VulnerablePower()])) table[ModelDb.GetId(model.GetType())] = model;
         check(models.Length == 16 && models.Count(c => c.Rarity == CardRarity.Common) == 5 && models.Count(c => c.Rarity == CardRarity.Uncommon) == 11, "sixteen expansion signals with five common and eleven uncommon");
-        check(models.All(c => c.MaxUpgradeLevel == 0 && c.EnergyCost.Canonical == 1 && !c.CanonicalKeywords.Any()), "expansion has no invented upgrades, retain or exhaust");
+        check(models.All(c => c.MaxUpgradeLevel == 1 && c.EnergyCost.Canonical == 1 && !c.CanonicalKeywords.Any()), "expansion supports one upgrade with unchanged base cost and keywords");
         var all = typeof(ChaosCard).Assembly.GetTypes().Where(t => !t.IsAbstract && typeof(ChaosCard).IsAssignableFrom(t)).Select(t => (ChaosCard)(table.TryGetValue(ModelDb.GetId(t), out var known) ? known : (AbstractModel)Activator.CreateInstance(t)!)).ToArray();
         check(all.Length == 59 && all.Count(c => c.Rarity == CardRarity.Token) == 3 && all.Count(c => c.Rarity == CardRarity.Basic) == 5, "fifty-six permanent cards plus three tokens; starter unchanged");
         Console.WriteLine("Reward rarity counts: " + string.Join(", ", all.Where(c => c.Rarity != CardRarity.Token && c.Rarity != CardRarity.Basic).GroupBy(c => c.Rarity).Select(g => $"{g.Key}={g.Count()}")));

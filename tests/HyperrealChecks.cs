@@ -88,7 +88,7 @@ static partial class HyperrealChecks
     internal static async Task Run(Action<bool, string> check)
     {
         ChaosCard[] cards = [new SwiftAssault(), new HyperdimensionalSpace(), new CausalConvergence(), new TemporalFinality(), new RealmTraversal()];
-        check(cards.All(c => c.MaxUpgradeLevel == 0), "hyperreal has no invented upgrades");
+        check(cards.All(c => c.MaxUpgradeLevel == (c.Rarity == CardRarity.Token ? 0 : 1)), "hyperreal rewards upgrade while traversal stays unchanged");
         check(cards.Select(c => c.Rarity).SequenceEqual(new[] { CardRarity.Common, CardRarity.Rare, CardRarity.Uncommon, CardRarity.Rare, CardRarity.Token }), "four hyperreal rewards and a token");
         check(cards.Select(c => c.EnergyCost.Canonical).SequenceEqual(new[] { 1, 2, 1, 0, 0 }), "hyperreal energy costs");
         check(CustomResources<Charge>.CanonicalCost(cards[3]) == 4 && cards[3].CanonicalKeywords.Contains(CardKeyword.Retain), "finality retains and costs four charge");
@@ -219,6 +219,7 @@ static partial class HyperrealChecks
             await RunExpansion(check, player, combat, target, powers, harmony);
             await RunEveryday(check, player, combat, target, powers, harmony);
             await RunInverseCrown(check, player, combat, target, powers, harmony);
+            await RunUpgrades(check, player, combat, target, powers, harmony);
             AccessTools.Method(runtime, "Reset").Invoke(null, null);
         }
         finally { harmony.UnpatchAll(harmony.Id); progress.SetValue(CombatManager.Instance, wasInProgress); }

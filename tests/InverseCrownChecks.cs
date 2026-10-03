@@ -131,7 +131,7 @@ static partial class HyperrealChecks
         await Invoke(atheism, "OnPlay", null, Play(atheism)); await StartTurn();
         check(player.Creature.CurrentHp == 0 && powers.All(p => p is not AtheismPower) && Draws.Count == 0, "lethal activation pays HP without applying a power or continuing dead-owner cycles");
         Reset();
-        check(burst.PreventAutoPlay && burst.CanonicalKeywords.Contains(CardKeyword.Retain) && burst.MaxUpgradeLevel == 0, "abyss keeps shared ultimate retain and autoplay restrictions without invented upgrade");
+        check(burst.PreventAutoPlay && burst.CanonicalKeywords.Contains(CardKeyword.Retain) && burst.MaxUpgradeLevel == 1, "abyss upgrades while preserving retain and autoplay restrictions");
         await Invoke(burst, "OnPlay", null, Play(burst, target, auto: true));
         await Invoke(burst, "OnPlay", null, Play(burst));
         check(AbyssPrompts == 0 && Attacks.Count == 0, "autoplay and missing target never prompt or attack");

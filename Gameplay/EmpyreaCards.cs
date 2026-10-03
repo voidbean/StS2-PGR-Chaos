@@ -15,7 +15,6 @@ namespace ChaosPrototype.Gameplay;
 
 public sealed class HymnPrayer() : ChaosCard(1, CardType.Skill, CardRarity.Uncommon, TargetType.Self)
 {
-    public override int MaxUpgradeLevel => 0;
     protected override string ArtName => "cards/HymnPrayer.png";
     protected override IEnumerable<DynamicVar> CanonicalVars => [new BlockVar(6, ValueProp.Move)];
     protected override IEnumerable<IHoverTip> ExtraHoverTips => [new HoverTip(new LocString("cards", Id.Entry + ".oaths")), new HoverTip(new LocString("cards", Id.Entry + ".flavor"))];
@@ -27,11 +26,11 @@ public sealed class HymnPrayer() : ChaosCard(1, CardType.Skill, CardRarity.Uncom
         if (OathflameRuntime.CanAct(Owner) && Owner.Creature.GetPower<PrayerPower>() == null)
             await PowerCmd.Apply<PrayerPower>(context, Owner.Creature, 1, Owner.Creature, this);
     }
+    protected override void OnUpgrade() { DynamicVars["Block"].UpgradeValueBy(3); }
 }
 
 public sealed class FeatherMass() : SignalCard(CardType.Skill, TargetType.Self)
 {
-    public override int MaxUpgradeLevel => 0;
     public override SignalColor SignalColor => SignalColor.Yellow;
     protected override string ArtName => "cards/FeatherMass.png";
     protected override IEnumerable<DynamicVar> CanonicalVars => [new BlockVar(3, ValueProp.Move), new BlockVar("TripleBlock", 6, ValueProp.Move)];
@@ -41,26 +40,27 @@ public sealed class FeatherMass() : SignalCard(CardType.Skill, TargetType.Self)
         await CreatureCmd.GainBlock(Owner.Creature, DynamicVars[strength == 3 ? "TripleBlock" : "Block"].BaseValue, ValueProp.Move, play);
         if (OathflameRuntime.CanAct(Owner)) await CardPileCmd.Draw(context, strength == 3 ? 2 : 1, Owner);
     }
+    protected override void OnUpgrade() { DynamicVars["Block"].UpgradeValueBy(3); DynamicVars["TripleBlock"].UpgradeValueBy(3); }
 }
 
 public sealed class FadingGospel() : SignalCard(CardType.Skill, TargetType.AnyEnemy)
 {
-    public override int MaxUpgradeLevel => 0;
     public override SignalColor SignalColor => SignalColor.Blue;
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new PowerVar<WeakPower>(1), new DynamicVar("TripleWeak", 2)];
     protected override string ArtName => "cards/FadingGospel.png";
-    public override List<(string, string)> Localization => new CardLoc("阑珊福音·蓝", "极昼 · 蓝球\n获得 1 充能，对目标施加 1 层虚弱。三消：改为 2 充能、2 层虚弱。");
+    public override List<(string, string)> Localization => new CardLoc("阑珊福音·蓝", "极昼 · 蓝球\n获得 1 充能，对目标施加 {WeakPower:diff()} 层虚弱。三消：改为 2 充能、{TripleWeak:diff()} 层虚弱。");
     protected override async Task Effect(PlayerChoiceContext context, CardPlay play, int strength)
     {
         int amount = strength == 3 ? 2 : 1;
         if (!OathflameRuntime.CanAct(Owner)) return;
         CustomResources<Charge>.Get(Owner.PlayerCombatState!).ModifyAmount(amount);
-        if (play.Target is { IsAlive: true }) await PowerCmd.Apply<WeakPower>(context, play.Target, amount, Owner.Creature, this);
+        if (play.Target is { IsAlive: true }) await PowerCmd.Apply<WeakPower>(context, play.Target, strength == 3 ? DynamicVars["TripleWeak"].BaseValue : DynamicVars.Weak.BaseValue, Owner.Creature, this);
     }
+    protected override void OnUpgrade() { DynamicVars.Weak.UpgradeValueBy(1); DynamicVars["TripleWeak"].UpgradeValueBy(1); }
 }
 
 public sealed class GarlandsSea() : BurstCard(4, CardType.Skill, TargetType.Self)
 {
-    public override int MaxUpgradeLevel => 0;
     protected override string ArtName => "cards/GarlandsSea.png";
     protected override IEnumerable<DynamicVar> CanonicalVars => [new BlockVar(10, ValueProp.Move)];
     protected override IEnumerable<IHoverTip> ExtraHoverTips => [new HoverTip(new LocString("cards", Id.Entry + ".limits"))];
@@ -71,21 +71,23 @@ public sealed class GarlandsSea() : BurstCard(4, CardType.Skill, TargetType.Self
         if (OathflameRuntime.CanAct(Owner) && Owner.Creature.GetPower<GarlandsSeaPower>() == null)
             await PowerCmd.Apply<GarlandsSeaPower>(context, Owner.Creature, 1, Owner.Creature, this);
     }
+    protected override void OnUpgrade() { DynamicVars["Block"].UpgradeValueBy(5); }
 }
 
 public sealed class RadiantCeremony() : ChaosCard(1, CardType.Skill, CardRarity.Uncommon, TargetType.Self)
 {
-    public override int MaxUpgradeLevel => 0;
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new CardsVar(2)];
     protected override string ArtName => "cards/RadiantCeremony.png";
-    public override List<(string, string)> Localization => new CardLoc("辉光纪礼", "抽 2 张牌，然后可将手中的 1 张信号球移到球区最右端。其他手牌相对顺序不变。", ("selectionPrompt", "可选择一颗信号球移到最右端"));
+    public override List<(string, string)> Localization => new CardLoc("辉光纪礼", "抽 {Cards:diff()} 张牌，然后可将手中的 1 张信号球移到球区最右端。其他手牌相对顺序不变。", ("selectionPrompt", "可选择一颗信号球移到最右端"));
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
         if (!OathflameRuntime.CanAct(Owner)) return;
-        await CardPileCmd.Draw(context, 2, Owner);
+        await CardPileCmd.Draw(context, DynamicVars["Cards"].IntValue, Owner);
         if (!OathflameRuntime.CanAct(Owner)) return;
         var selected = (await CardSelectCmd.FromHand(context, Owner, new CardSelectorPrefs(new LocString("cards", Id.Entry + ".selectionPrompt"), 0, 1), c => c is SignalCard, this)).FirstOrDefault();
         if (!OathflameRuntime.CanAct(Owner) || selected is not SignalCard || selected.Pile != Owner.PlayerCombatState!.Hand) return;
         var order = RavenTurnRules.MoveToRight(Owner.PlayerCombatState.Hand.Cards, selected);
         UI.HandOrder.Apply(Owner, order);
     }
+    protected override void OnUpgrade() { DynamicVars["Cards"].UpgradeValueBy(1); }
 }

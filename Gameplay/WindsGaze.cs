@@ -12,7 +12,6 @@ namespace ChaosPrototype.Gameplay;
 
 public sealed class WindsGaze() : ChaosCard(1, CardType.Skill, CardRarity.Rare, TargetType.Self)
 {
-    public override int MaxUpgradeLevel => 0;
     protected override string ArtName => "cards/WindsGaze.png";
     public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Ethereal, CardKeyword.Exhaust];
     protected override IEnumerable<IHoverTip> ExtraHoverTips => [new HoverTip(new LocString("cards", Id.Entry + ".flavor"))];
@@ -27,6 +26,7 @@ public sealed class WindsGaze() : ChaosCard(1, CardType.Skill, CardRarity.Rare, 
         if (Owner.Creature.GetPower<WindsGazePower>() == null)
             await PowerCmd.Apply<WindsGazePower>(context, Owner.Creature, 1, Owner.Creature, this);
     }
+    protected override void OnUpgrade() { EnergyCost.UpgradeBy(-1); }
 }
 
 public sealed class WindsGazePower : ResonancePower

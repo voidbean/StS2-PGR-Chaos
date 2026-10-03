@@ -31,7 +31,6 @@ public sealed class MoltenQuench() : ChaosCard(2, CardType.Skill, CardRarity.Rar
 
 public sealed class CoordinatedSlash() : BurstCard(4, CardType.Attack, TargetType.AllEnemies)
 {
-    public override int MaxUpgradeLevel => 0;
     protected override string ArtName => "cards/CoordinatedSlash.png";
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(18, ValueProp.Move)];
     protected override IEnumerable<IHoverTip> ExtraHoverTips => [new HoverTip(new LocString("cards", Id.Entry + ".flavor"))];
@@ -41,11 +40,11 @@ public sealed class CoordinatedSlash() : BurstCard(4, CardType.Attack, TargetTyp
         await DamageCmd.Attack(DynamicVars["Damage"].BaseValue).FromCard(this).TargetingAllOpponents(CombatState!).Execute(context);
         await OathflameRuntime.Fly(context, this);
     }
+    protected override void OnUpgrade() { DynamicVars["Damage"].UpgradeValueBy(6); }
 }
 
 public sealed class EclipseDawn() : BurstCard(4, CardType.Attack, TargetType.AllEnemies)
 {
-    public override int MaxUpgradeLevel => 0;
     protected override string ArtName => "cards/EclipseDawn.png";
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(24, ValueProp.Move), new DamageVar("FlyingDamage", 32, ValueProp.Move)];
     protected override IEnumerable<IHoverTip> ExtraHoverTips => [new HoverTip(new LocString("cards", Id.Entry + ".flavor"))];
@@ -56,11 +55,11 @@ public sealed class EclipseDawn() : BurstCard(4, CardType.Attack, TargetType.All
         await DamageCmd.Attack(DynamicVars[flight == null ? "Damage" : "FlyingDamage"].BaseValue).FromCard(this).TargetingAllOpponents(CombatState!).Execute(context);
         if (flight != null) await PowerCmd.Remove(flight);
     }
+    protected override void OnUpgrade() { DynamicVars["Damage"].UpgradeValueBy(6); DynamicVars["FlyingDamage"].UpgradeValueBy(8); }
 }
 
 public sealed class BlazingFeathers() : SignalCard(CardType.Attack, TargetType.AnyEnemy)
 {
-    public override int MaxUpgradeLevel => 0;
     public override SignalColor SignalColor => SignalColor.Yellow;
     protected override string ArtName => "cards/BlazingFeathers.png";
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(6, ValueProp.Move), new DamageVar("TripleDamage", 10, ValueProp.Move)];
@@ -75,6 +74,7 @@ public sealed class BlazingFeathers() : SignalCard(CardType.Attack, TargetType.A
         if (OathflameRuntime.CanAct(Owner))
             await CardPileCmd.AddGeneratedCardsToCombat([CombatState!.CreateCard<SoaringContinuation>(Owner)], PileType.Hand, Owner);
     }
+    protected override void OnUpgrade() { DynamicVars["Damage"].UpgradeValueBy(3); DynamicVars["TripleDamage"].UpgradeValueBy(4); }
 }
 
 public sealed class SoaringContinuation() : ChaosCard(0, CardType.Attack, CardRarity.Token, TargetType.AnyEnemy)
@@ -95,7 +95,6 @@ public sealed class SoaringContinuation() : ChaosCard(0, CardType.Attack, CardRa
 
 public sealed class FlowingThunder() : SignalCard(CardType.Skill, TargetType.Self, CardRarity.Rare)
 {
-    public override int MaxUpgradeLevel => 0;
     public override SignalColor SignalColor => SignalColor.Blue;
     protected override string ArtName => "cards/FlowingThunder.png";
     public override List<(string, string)> Localization => new CardLoc("流火鸣雷·蓝", "誓焰 · 蓝球\n获得飞行。三消：另获得 2 充能。\n飞行：直到下个自己的回合开始，受到的攻击伤害降低 50%，不叠加。");
@@ -104,6 +103,7 @@ public sealed class FlowingThunder() : SignalCard(CardType.Skill, TargetType.Sel
         await OathflameRuntime.Fly(context, this);
         if (strength == 3 && OathflameRuntime.CanAct(Owner)) CustomResources<Charge>.Get(Owner.PlayerCombatState!).ModifyAmount(2);
     }
+    protected override void OnUpgrade() { EnergyCost.UpgradeBy(-1); }
 }
 
 public sealed class OmegaCore : ChaosCard

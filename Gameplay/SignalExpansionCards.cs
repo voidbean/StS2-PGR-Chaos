@@ -12,7 +12,6 @@ namespace ChaosPrototype.Gameplay;
 
 public abstract class ExpandedSignal(CardType type, TargetType target, CardRarity rarity) : SignalCard(type, target, rarity)
 {
-    public override int MaxUpgradeLevel => 0;
     protected override string ArtName => $"cards/{GetType().Name}.png";
     protected decimal Damage(int strength) => DynamicVars[strength == 3 ? "TripleDamage" : "Damage"].BaseValue;
     protected async Task Hit(PlayerChoiceContext context, CardPlay play, decimal damage, int hits = 1)
@@ -36,18 +35,20 @@ public sealed class ShatteringImpact() : ExpandedSignal(CardType.Attack, TargetT
     {
         await Hit(context, play, Damage(strength), 2);
     }
+    protected override void OnUpgrade() { DynamicVars["Damage"].UpgradeValueBy(1); DynamicVars["TripleDamage"].UpgradeValueBy(1); }
 }
 
 public sealed class GlacialCirculation() : ExpandedSignal(CardType.Attack, TargetType.AllEnemies, CardRarity.Uncommon)
 {
     public override SignalColor SignalColor => SignalColor.Blue;
-    protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(2, ValueProp.Move), new DamageVar("TripleDamage", 3, ValueProp.Move)];
-    public override List<(string, string)> Localization => new CardLoc("冰魄环流·蓝", "鸦羽 · 蓝球\n对所有敌人造成 2、2、2 点伤害。三消：改为 3、3、4 点。");
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(2, ValueProp.Move), new DamageVar("TripleDamage", 3, ValueProp.Move), new DamageVar("TripleFinalDamage", 4, ValueProp.Move)];
+    public override List<(string, string)> Localization => new CardLoc("冰魄环流·蓝", "鸦羽 · 蓝球\n对所有敌人造成 {Damage:diff()} 点伤害 3 次。三消：前两次各 {TripleDamage:diff()} 点，最后一次 {TripleFinalDamage:diff()} 点。");
     protected override async Task Effect(PlayerChoiceContext context, CardPlay play, int strength)
     {
         await HitAll(context, Damage(strength), 2);
-        await HitAll(context, strength == 3 ? 4 : 2);
+        await HitAll(context, DynamicVars[strength == 3 ? "TripleFinalDamage" : "Damage"].BaseValue);
     }
+    protected override void OnUpgrade() { DynamicVars["Damage"].UpgradeValueBy(1); DynamicVars["TripleDamage"].UpgradeValueBy(1); DynamicVars["TripleFinalDamage"].UpgradeValueBy(1); }
 }
 
 public sealed class RadiantDaybreak() : ExpandedSignal(CardType.Attack, TargetType.AnyEnemy, CardRarity.Uncommon)
@@ -67,6 +68,7 @@ public sealed class RadiantDaybreak() : ExpandedSignal(CardType.Attack, TargetTy
         if (OathflameRuntime.CanAct(Owner))
             await CardPileCmd.AddGeneratedCardsToCombat([CombatState!.CreateCard<SoaringContinuation>(Owner)], PileType.Hand, Owner);
     }
+    protected override void OnUpgrade() { DynamicVars["Damage"].UpgradeValueBy(3); DynamicVars["TripleDamage"].UpgradeValueBy(4); }
 }
 
 public sealed class OpeningStance() : ExpandedSignal(CardType.Attack, TargetType.AnyEnemy, CardRarity.Common)
@@ -81,6 +83,7 @@ public sealed class OpeningStance() : ExpandedSignal(CardType.Attack, TargetType
         await Hit(context, play, Damage(strength), strength == 3 ? 1 : 1);
         if (_priorTriple) await Hit(context, play, 2, 2);
     }
+    protected override void OnUpgrade() { DynamicVars["Damage"].UpgradeValueBy(3); DynamicVars["TripleDamage"].UpgradeValueBy(4); }
 }
 
 public sealed class ContinuousFire() : ExpandedSignal(CardType.Attack, TargetType.AnyEnemy, CardRarity.Uncommon)
@@ -95,6 +98,7 @@ public sealed class ContinuousFire() : ExpandedSignal(CardType.Attack, TargetTyp
         await Hit(context, play, Damage(strength), strength == 3 ? 4 : 2);
         if (_priorTriple) await Hit(context, play, 2, 2);
     }
+    protected override void OnUpgrade() { DynamicVars["Damage"].UpgradeValueBy(1); DynamicVars["TripleDamage"].UpgradeValueBy(1); }
 }
 
 public sealed class WaveSlash() : ExpandedSignal(CardType.Attack, TargetType.AnyEnemy, CardRarity.Uncommon)
@@ -107,16 +111,19 @@ public sealed class WaveSlash() : ExpandedSignal(CardType.Attack, TargetType.Any
         await Hit(context, play, Damage(strength));
         if (play.PlayIndex == 0 && await SignalSupportPower.Ensure(context, this) is { } support) support.PrepareFlames(strength == 3 ? 3 : 2);
     }
+    protected override void OnUpgrade() { DynamicVars["Damage"].UpgradeValueBy(3); DynamicVars["TripleDamage"].UpgradeValueBy(4); }
 }
 
 public sealed class TransferCharge() : ExpandedSignal(CardType.Skill, TargetType.Self, CardRarity.Uncommon)
 {
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new DynamicVar("Attacks", 2), new DynamicVar("TripleAttacks", 3)];
     public override SignalColor SignalColor => SignalColor.Yellow;
-    public override List<(string, string)> Localization => new CardLoc("转移充能·黄", "仰光 · 黄球\n本回合之后 2 张攻击牌结算后，对其命中过的每名敌人追加一次 3 点攻击伤害。三消：改为 3 张。\n按整张牌计次，多段与重放不多消费次数。重复获得取剩余次数与新次数的较大值；重放不补次数。");
+    public override List<(string, string)> Localization => new CardLoc("转移充能·黄", "仰光 · 黄球\n本回合之后 {Attacks:diff()} 张攻击牌结算后，对其命中过的每名敌人追加一次 3 点攻击伤害。三消：改为 {TripleAttacks:diff()} 张。\n按整张牌计次，多段与重放不多消费次数。重复获得取剩余次数与新次数的较大值；重放不补次数。");
     protected override async Task Effect(PlayerChoiceContext context, CardPlay play, int strength)
     {
-        if (play.PlayIndex == 0 && await SignalSupportPower.Ensure(context, this) is { } support) support.PrepareShots(strength == 3 ? 3 : 2);
+        if (play.PlayIndex == 0 && await SignalSupportPower.Ensure(context, this) is { } support) support.PrepareShots(DynamicVars[strength == 3 ? "TripleAttacks" : "Attacks"].IntValue);
     }
+    protected override void OnUpgrade() { DynamicVars["Attacks"].UpgradeValueBy(1); DynamicVars["TripleAttacks"].UpgradeValueBy(1); }
 }
 
 public sealed class GrayRavenField() : ExpandedSignal(CardType.Attack, TargetType.AllEnemies, CardRarity.Uncommon)
@@ -129,6 +136,7 @@ public sealed class GrayRavenField() : ExpandedSignal(CardType.Attack, TargetTyp
         await HitAll(context, Damage(strength));
         if (play.PlayIndex == 0 && await SignalSupportPower.Ensure(context, this) is { } support) support.Mark(CombatState!.HittableEnemies.ToArray(), strength == 3 ? 3 : 2);
     }
+    protected override void OnUpgrade() { DynamicVars["Damage"].UpgradeValueBy(3); DynamicVars["TripleDamage"].UpgradeValueBy(3); }
 }
 
 public sealed class EclipticGrace() : ExpandedSignal(CardType.Attack, TargetType.AllEnemies, CardRarity.Common)
@@ -140,6 +148,7 @@ public sealed class EclipticGrace() : ExpandedSignal(CardType.Attack, TargetType
     {
         await HitAll(context, Damage(strength));
     }
+    protected override void OnUpgrade() { DynamicVars["Damage"].UpgradeValueBy(3); DynamicVars["TripleDamage"].UpgradeValueBy(3); }
 }
 
 public sealed class ExemptionSpace() : ExpandedSignal(CardType.Attack, TargetType.AllEnemies, CardRarity.Uncommon)
@@ -154,6 +163,7 @@ public sealed class ExemptionSpace() : ExpandedSignal(CardType.Attack, TargetTyp
             foreach (var target in CombatState!.HittableEnemies.ToArray())
                 await PowerCmd.Apply<WeakPower>(context, target, strength == 3 ? 2 : 1, Owner.Creature, this);
     }
+    protected override void OnUpgrade() { DynamicVars["Damage"].UpgradeValueBy(2); DynamicVars["TripleDamage"].UpgradeValueBy(3); }
 }
 
 public sealed class FictionalBarrier() : ExpandedSignal(CardType.Skill, TargetType.AnyEnemy, CardRarity.Uncommon)
@@ -167,6 +177,7 @@ public sealed class FictionalBarrier() : ExpandedSignal(CardType.Skill, TargetTy
         if (OathflameRuntime.CanAct(Owner) && play.Target is { IsAlive: true })
             await PowerCmd.Apply<WeakPower>(context, play.Target, strength == 3 ? 2 : 1, Owner.Creature, this);
     }
+    protected override void OnUpgrade() { DynamicVars["Block"].UpgradeValueBy(3); DynamicVars["TripleBlock"].UpgradeValueBy(3); }
 }
 
 public sealed class ElectricInduction() : ExpandedSignal(CardType.Attack, TargetType.AnyEnemy, CardRarity.Uncommon)
@@ -181,6 +192,7 @@ public sealed class ElectricInduction() : ExpandedSignal(CardType.Attack, Target
         await PowerCmd.Apply<VulnerablePower>(context, play.Target, 1, Owner.Creature, this);
         if (await SignalSupportPower.Ensure(context, this) is { } support) support.Delay(play.Target, strength == 3 ? 5 : 3);
     }
+    protected override void OnUpgrade() { DynamicVars["Damage"].UpgradeValueBy(3); DynamicVars["TripleDamage"].UpgradeValueBy(4); }
 }
 
 public sealed class ShadowManeuver() : ExpandedSignal(CardType.Attack, TargetType.AnyEnemy, CardRarity.Common)
@@ -195,6 +207,7 @@ public sealed class ShadowManeuver() : ExpandedSignal(CardType.Attack, TargetTyp
         await CreatureCmd.GainBlock(Owner.Creature, DynamicVars[strength == 3 ? "TripleBlock" : "Block"].BaseValue, ValueProp.Move, play);
         if (strength == 3) await Hit(context, play, 4);
     }
+    protected override void OnUpgrade() { DynamicVars["Block"].UpgradeValueBy(3); DynamicVars["TripleBlock"].UpgradeValueBy(3); }
 }
 
 public sealed class FallingFire() : ExpandedSignal(CardType.Attack, TargetType.AnyEnemy, CardRarity.Uncommon)
@@ -209,6 +222,7 @@ public sealed class FallingFire() : ExpandedSignal(CardType.Attack, TargetType.A
         if (strength == 3 && !play.IsAutoPlay && play.PlayIndex == 0 && await SignalSupportPower.Ensure(context, this) is { } support && support.ReserveTraversal())
             await CardPileCmd.AddGeneratedCardsToCombat([CombatState!.CreateCard<RealmTraversal>(Owner)], PileType.Hand, Owner);
     }
+    protected override void OnUpgrade() { DynamicVars["Damage"].UpgradeValueBy(3); DynamicVars["TripleDamage"].UpgradeValueBy(4); }
 }
 
 public sealed class PrecisionVolley() : ExpandedSignal(CardType.Attack, TargetType.AnyEnemy, CardRarity.Common)
@@ -220,6 +234,7 @@ public sealed class PrecisionVolley() : ExpandedSignal(CardType.Attack, TargetTy
     {
         await Hit(context, play, Damage(strength), strength == 3 ? 4 : 3);
     }
+    protected override void OnUpgrade() { DynamicVars["Damage"].UpgradeValueBy(1); DynamicVars["TripleDamage"].UpgradeValueBy(1); }
 }
 
 public sealed class ThermalShot() : ExpandedSignal(CardType.Attack, TargetType.AnyEnemy, CardRarity.Uncommon)
@@ -234,4 +249,5 @@ public sealed class ThermalShot() : ExpandedSignal(CardType.Attack, TargetType.A
         if (play.Target is { IsAlive: true }) support.Delay(play.Target, strength == 3 ? 7 : 4);
         if (play.PlayIndex == 0) support.PrepareExplosions(strength == 3 ? 4 : 3);
     }
+    protected override void OnUpgrade() { DynamicVars["Damage"].UpgradeValueBy(3); DynamicVars["TripleDamage"].UpgradeValueBy(4); }
 }

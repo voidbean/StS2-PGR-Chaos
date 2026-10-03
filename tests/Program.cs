@@ -79,7 +79,7 @@ Check(abilities.All(c => c.Type == CardType.Power) && abilities[0].Rarity == Car
 ChaosCard[] ravens = [new FrostBlade(), new GlacialForm(), new GlacialBloom(), new RepulsiveBeam(), new GoddessConnection(), new ArcadiaGate(), new RetreatShot(), new TacticalCalculation(), new OrbitalStrike()];
 Check(ravens.Count(c => c.Rarity == CardRarity.Common) == 4 && ravens.Count(c => c.Rarity == CardRarity.Uncommon) == 2 && ravens.Count(c => c.Rarity == CardRarity.Rare) == 3, "new reward rarity distribution includes three distinct rares");
 Check(new ChaosCard[] { red, yellow, blue, ultimate }.All(c => c.Rarity == CardRarity.Basic), "starter-only cards excluded from normal reward rarity rolls");
-Check(ravens.All(c => c.MaxUpgradeLevel == 0), "first testing batch has no upgrades");
+Check(ravens.All(c => c.MaxUpgradeLevel == 1), "gray raven rewards support one upgrade");
 Check(ravens.OfType<BurstCard>().All(c => c.CanonicalKeywords.Contains(CardKeyword.Retain) && c.EnergyCost.Canonical == 0 && CustomResources<Charge>.CanonicalCost(c) == (c is GlacialBloom ? 4 : 3)), "all three bursts retain and require their charge cost");
 Check(ravens.Single(c => c is ArcadiaGate).CanonicalKeywords.Contains(CardKeyword.Exhaust), "healing burst exhausts");
 Check(ravens.OfType<SignalCard>().All(c => c.EnergyCost.Canonical == 1 && !c.CanonicalKeywords.Contains(CardKeyword.Retain)), "new signals cost one and do not retain");

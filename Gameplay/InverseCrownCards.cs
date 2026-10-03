@@ -46,7 +46,6 @@ public sealed class Atheism() : ChaosCard(2, CardType.Power, CardRarity.Rare, Ta
 public sealed class LightlessAbyss() : BurstCard(4, CardType.Attack, TargetType.AnyEnemy)
 {
     private bool? _severance;
-    public override int MaxUpgradeLevel => 0;
     protected override string ArtName => "cards/LightlessAbyss.png";
     protected override IEnumerable<DynamicVar> CanonicalVars =>
         [new DamageVar(36, ValueProp.Move), new DamageVar("SeveranceDamage", 6, ValueProp.Move)];
@@ -57,21 +56,23 @@ public sealed class LightlessAbyss() : BurstCard(4, CardType.Attack, TargetType.
         if (play.PlayIndex == 0)
         {
             _severance = null;
-            var chosen = await CardSelectCmd.FromChooseACardScreen(context,
-                [ModelDb.Card<MyriadCalamitiesChoice>(), ModelDb.Card<SeveranceChoice>()], Owner);
+            CardModel[] choices = [ModelDb.Card<MyriadCalamitiesChoice>().ToMutable(), ModelDb.Card<SeveranceChoice>().ToMutable()];
+            if (IsUpgraded)
+                foreach (var choice in choices) choice.UpgradeInternal();
+            var chosen = await CardSelectCmd.FromChooseACardScreen(context, choices, Owner);
             _severance = chosen switch { MyriadCalamitiesChoice => false, SeveranceChoice => true, _ => null };
         }
         if (_severance == null || !OathflameRuntime.CanAct(Owner) || play.Target is not { IsAlive: true }) return;
         await DamageCmd.Attack(DynamicVars[_severance.Value ? "SeveranceDamage" : "Damage"].BaseValue)
             .FromCard(this).Targeting(play.Target).WithHitCount(_severance.Value ? 5 : 1).Execute(context);
     }
+    protected override void OnUpgrade() { DynamicVars["Damage"].UpgradeValueBy(9); DynamicVars["SeveranceDamage"].UpgradeValueBy(2); }
 }
 
 // Screen-only choices: no reward pool, compendium entry, debug card or generated combat card.
 public abstract class AbyssModeChoice() : CustomCardModel(0, CardType.Attack, CardRarity.Token, TargetType.None,
     showInCardLibrary: false, autoAdd: false)
 {
-    public override int MaxUpgradeLevel => 0;
     public override CardPoolModel Pool => ModelDb.CardPool<ChaosCardPool>();
     protected override bool IsPlayable => false;
     public override string CustomPortraitPath => $"res://ChaosPrototype/cards/{GetType().Name}.png";
@@ -82,10 +83,14 @@ public abstract class AbyssModeChoice() : CustomCardModel(0, CardType.Attack, Ca
 
 public sealed class MyriadCalamitiesChoice : AbyssModeChoice
 {
-    public override List<(string, string)> Localization => new CardLoc("万劫", "诸光尽默之渊 · 模式\n对所选敌人造成 36 点基础伤害。\n单次重击，伤害由大招结算。");
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(36, ValueProp.Move)];
+    public override List<(string, string)> Localization => new CardLoc("万劫", "诸光尽默之渊 · 模式\n对所选敌人造成 {Damage:diff()} 点基础伤害。\n单次重击，伤害由大招结算。");
+    protected override void OnUpgrade() => DynamicVars["Damage"].UpgradeValueBy(9);
 }
 
 public sealed class SeveranceChoice : AbyssModeChoice
 {
-    public override List<(string, string)> Localization => new CardLoc("断念", "诸光尽默之渊 · 模式\n对所选敌人造成 6 点基础伤害，共 5 次。\n每次攻击分别接受伤害修正。");
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(6, ValueProp.Move)];
+    public override List<(string, string)> Localization => new CardLoc("断念", "诸光尽默之渊 · 模式\n对所选敌人造成 {Damage:diff()} 点基础伤害，共 5 次。\n每次攻击分别接受伤害修正。");
+    protected override void OnUpgrade() => DynamicVars["Damage"].UpgradeValueBy(2);
 }

@@ -36,7 +36,7 @@ static partial class HyperrealChecks
         var table = (Dictionary<ModelId, AbstractModel>)AccessTools.Field(typeof(ModelDb), "_contentById").GetValue(null)!;
         foreach (var model in cards.Cast<AbstractModel>().Concat([new OathflameFlightPower(), new MoltenChasePower(), new ContinuationCleanupPower(), new OmegaCorePower()])) table[ModelDb.GetId(model.GetType())] = model;
         check(cards.Count(c => c.Rarity == CardRarity.Token) == 2 && cards.Count(c => c.Rarity == CardRarity.Rare) == 5, "oathflame six reward cards and two tokens");
-        check(cards.Where(c => c is not MoltenQuench and not OmegaCore).All(c => c.MaxUpgradeLevel == 0), "only confirmed oathflame upgrades available");
+        check(cards.All(c => c.MaxUpgradeLevel == (c.Rarity == CardRarity.Token ? 0 : 1)), "oathflame permanent cards upgrade and tokens stay unchanged");
         var upgraded = cards[0].ToMutable(); upgraded.UpgradeInternal();
         check(upgraded.EnergyCost.Canonical == 2 && upgraded.EnergyCost.GetWithModifiers(CostModifiers.All) == 1, "quench upgrade reduces energy to one");
         var upgradedCore = cards[6].ToMutable(); upgradedCore.UpgradeInternal();

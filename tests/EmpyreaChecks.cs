@@ -60,7 +60,7 @@ static partial class HyperrealChecks
         ChaosCard[] cards = [new HymnPrayer(), new FeatherMass(), new FadingGospel(), new GarlandsSea(), new RadiantCeremony()];
         var table = (Dictionary<ModelId, AbstractModel>)AccessTools.Field(typeof(ModelDb), "_contentById").GetValue(null)!;
         foreach (var model in cards.Cast<AbstractModel>().Concat([new PrayerPower(), new GarlandsSeaPower(), new WeakPower()])) table[ModelDb.GetId(model.GetType())] = model;
-        check(cards.All(c => c.MaxUpgradeLevel == 0) && cards.All(c => c.Type == CardType.Skill), "five empyrea skills with no invented upgrades");
+        check(cards.All(c => c.MaxUpgradeLevel == 1) && cards.All(c => c.Type == CardType.Skill), "five empyrea skills support upgrades");
         check(cards.Select(c => c.Rarity).SequenceEqual(new[] { CardRarity.Uncommon, CardRarity.Common, CardRarity.Common, CardRarity.Rare, CardRarity.Uncommon }), "empyrea confirmed rarity distribution");
         check(CustomResources<Charge>.CanonicalCost(cards[3]) == 4 && cards[3].CanonicalKeywords.Contains(CardKeyword.Retain), "sea retains and costs four charge");
         harmony.Patch(AccessTools.Method(typeof(CreatureCmd), "GainBlock", [typeof(Creature), typeof(decimal), typeof(ValueProp), typeof(CardPlay), typeof(bool)]), prefix: new HarmonyMethod(typeof(HyperrealChecks), nameof(GainBlock)));

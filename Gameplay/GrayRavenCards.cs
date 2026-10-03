@@ -31,7 +31,6 @@ public abstract class BurstCard : ChaosCard
 
 public sealed class FrostBlade() : SignalCard(CardType.Attack, TargetType.AnyEnemy)
 {
-    public override int MaxUpgradeLevel => 0;
     public override SignalColor SignalColor => SignalColor.Red;
     protected override string ArtName => "cards/FrostBlade.png";
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(6, ValueProp.Move), new DamageVar("TripleDamage", 12, ValueProp.Move)];
@@ -42,11 +41,11 @@ public sealed class FrostBlade() : SignalCard(CardType.Attack, TargetType.AnyEne
         if (strength == 3 && !CombatManager.Instance.IsOverOrEnding && !Owner.Creature.IsDead)
             CustomResources<Charge>.Get(Owner.PlayerCombatState!).ModifyAmount(1);
     }
+    protected override void OnUpgrade() { DynamicVars["Damage"].UpgradeValueBy(3); DynamicVars["TripleDamage"].UpgradeValueBy(4); }
 }
 
 public sealed class RepulsiveBeam() : SignalCard(CardType.Attack, TargetType.AnyEnemy)
 {
-    public override int MaxUpgradeLevel => 0;
     public override SignalColor SignalColor => SignalColor.Red;
     protected override string ArtName => "cards/RepulsiveBeam.png";
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(5, ValueProp.Move), new DamageVar("TripleDamage", 10, ValueProp.Move)];
@@ -57,11 +56,11 @@ public sealed class RepulsiveBeam() : SignalCard(CardType.Attack, TargetType.Any
         if (strength == 3 && play.Target!.IsAlive && !CombatManager.Instance.IsOverOrEnding)
             await PowerCmd.Apply<WeakPower>(context, play.Target, 2, Owner.Creature, this);
     }
+    protected override void OnUpgrade() { DynamicVars["Damage"].UpgradeValueBy(3); DynamicVars["TripleDamage"].UpgradeValueBy(4); }
 }
 
 public sealed class RetreatShot() : SignalCard(CardType.Attack, TargetType.AnyEnemy)
 {
-    public override int MaxUpgradeLevel => 0;
     public override SignalColor SignalColor => SignalColor.Yellow;
     protected override string ArtName => "cards/RetreatShot.png";
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(4, ValueProp.Move), new DamageVar("TripleDamage", 8, ValueProp.Move), new BlockVar(3, ValueProp.Move), new BlockVar("TripleBlock", 6, ValueProp.Move)];
@@ -72,11 +71,11 @@ public sealed class RetreatShot() : SignalCard(CardType.Attack, TargetType.AnyEn
         if (!CombatManager.Instance.IsOverOrEnding && !Owner.Creature.IsDead)
             await CreatureCmd.GainBlock(Owner.Creature, DynamicVars[strength == 3 ? "TripleBlock" : "Block"].BaseValue, ValueProp.Move, play);
     }
+    protected override void OnUpgrade() { DynamicVars["Damage"].UpgradeValueBy(2); DynamicVars["TripleDamage"].UpgradeValueBy(2); DynamicVars["Block"].UpgradeValueBy(2); DynamicVars["TripleBlock"].UpgradeValueBy(2); }
 }
 
 public sealed class GlacialForm() : ChaosCard(1, CardType.Skill, CardRarity.Uncommon, TargetType.Self)
 {
-    public override int MaxUpgradeLevel => 0;
     protected override string ArtName => "cards/GlacialForm.png";
     protected override IEnumerable<DynamicVar> CanonicalVars => [new BlockVar(4, ValueProp.Move)];
     public override List<(string, string)> Localization => [..(List<(string, string)>)new CardLoc("极寒形态", "鸦羽 · 技能\n获得 {Block:diff()} 点格挡。选择一颗手中信号球，将所有同色球移到最右侧，各组内部顺序不变。"), ("selectionPrompt", "选择一颗球：将所有同色球移到最右侧")];
@@ -89,11 +88,11 @@ public sealed class GlacialForm() : ChaosCard(1, CardType.Skill, CardRarity.Unco
         var order = RavenTurnRules.Gather(hand.Cards, signal.SignalColor, SignalRuntime.Color);
         UI.HandOrder.Apply(Owner, order);
     }
+    protected override void OnUpgrade() { DynamicVars["Block"].UpgradeValueBy(3); }
 }
 
 public sealed class GoddessConnection() : ChaosCard(1, CardType.Skill, CardRarity.Uncommon, TargetType.Self)
 {
-    public override int MaxUpgradeLevel => 0;
     protected override string ArtName => "cards/GoddessConnection.png";
     protected override IEnumerable<DynamicVar> CanonicalVars => [new BlockVar(7, ValueProp.Move)];
     public override List<(string, string)> Localization => new CardLoc("女神连接系统", "仰光 · 技能\n获得 {Block:diff()} 点格挡。本回合下一次三消效果额外获得 7 点格挡。奖励不可叠加；超算强化也可触发。");
@@ -102,17 +101,18 @@ public sealed class GoddessConnection() : ChaosCard(1, CardType.Skill, CardRarit
         await CreatureCmd.GainBlock(Owner.Creature, DynamicVars["Block"].BaseValue, ValueProp.Move, play);
         if (!CombatManager.Instance.IsOverOrEnding && !Owner.Creature.IsDead) RavenRuntime.Get(Owner).ArmConnection();
     }
+    protected override void OnUpgrade() { DynamicVars["Block"].UpgradeValueBy(3); }
 }
 
 public sealed class TacticalCalculation() : ChaosCard(1, CardType.Skill, CardRarity.Common, TargetType.Self)
 {
-    public override int MaxUpgradeLevel => 0;
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new CardsVar(2)];
     protected override string ArtName => "cards/TacticalCalculation.png";
-    public override List<(string, string)> Localization => [..(List<(string, string)>)new CardLoc("战术运算", "乱数 · 技能\n从抽牌堆依次选择至多 2 张信号球加入手牌，然后弃置 1 张手牌。未取牌则不弃牌。手牌满时停止取牌。"), ("selectionPrompt", "选择下一颗球加入手牌最右侧（可不选）")];
+    public override List<(string, string)> Localization => [..(List<(string, string)>)new CardLoc("战术运算", "乱数 · 技能\n从抽牌堆依次选择至多 {Cards:diff()} 张信号球加入手牌，然后弃置 1 张手牌。未取牌则不弃牌。手牌满时停止取牌。"), ("selectionPrompt", "选择下一颗球加入手牌最右侧（可不选）")];
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
         int taken = 0;
-        for (int i = 0; i < 2; i++)
+        for (int i = 0; i < DynamicVars["Cards"].IntValue; i++)
         {
             if (CombatManager.Instance.IsOverOrEnding || Owner.Creature.IsDead || Owner.PlayerCombatState is not { } state) return;
             if (state.Hand.Cards.Count >= CardPile.MaxCardsInHand) break;
@@ -129,21 +129,21 @@ public sealed class TacticalCalculation() : ChaosCard(1, CardType.Skill, CardRar
         var discard = await CardSelectCmd.FromHandForDiscard(context, Owner, new CardSelectorPrefs(CardSelectorPrefs.DiscardSelectionPrompt, 1), null, this);
         await CardCmd.Discard(context, discard);
     }
+    protected override void OnUpgrade() { DynamicVars["Cards"].UpgradeValueBy(1); }
 }
 
 public sealed class GlacialBloom() : BurstCard(4, CardType.Attack, TargetType.AllEnemies)
 {
-    public override int MaxUpgradeLevel => 0;
     protected override string ArtName => "cards/GlacialBloom.png";
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(18, ValueProp.Move)];
     public override List<(string, string)> Localization => new CardLoc("刹那冰华", "鸦羽 · 大招\n保留。消耗 4 充能。对所有敌人造成 {Damage:diff()} 点伤害。本回合每次三消效果增加 6 点基础伤害，最多增加 12。不可自动打出。");
     protected override async Task BurstEffect(PlayerChoiceContext context, CardPlay play) =>
         await DamageCmd.Attack(DynamicVars["Damage"].BaseValue + RavenRuntime.Get(Owner).IceBonus).FromCard(this).TargetingAllOpponents(CombatState!).Execute(context);
+    protected override void OnUpgrade() { DynamicVars["Damage"].UpgradeValueBy(6); }
 }
 
 public sealed class ArcadiaGate() : BurstCard(3, CardType.Skill, TargetType.Self)
 {
-    public override int MaxUpgradeLevel => 0;
     protected override string ArtName => "cards/ArcadiaGate.png";
     public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Retain, CardKeyword.Exhaust];
     protected override IEnumerable<DynamicVar> CanonicalVars => [new BlockVar(18, ValueProp.Move)];
@@ -153,14 +153,15 @@ public sealed class ArcadiaGate() : BurstCard(3, CardType.Skill, TargetType.Self
         await CreatureCmd.GainBlock(Owner.Creature, DynamicVars["Block"].BaseValue, ValueProp.Move, play);
         if (!CombatManager.Instance.IsOverOrEnding && !Owner.Creature.IsDead) await CreatureCmd.Heal(Owner.Creature, 3);
     }
+    protected override void OnUpgrade() { DynamicVars["Block"].UpgradeValueBy(6); }
 }
 
 public sealed class OrbitalStrike() : BurstCard(3, CardType.Attack, TargetType.AnyEnemy)
 {
-    public override int MaxUpgradeLevel => 0;
     protected override string ArtName => "cards/OrbitalStrike.png";
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(5, ValueProp.Move)];
     public override List<(string, string)> Localization => new CardLoc("轨道打击", "乱数 · 大招\n保留。消耗 3 充能。对同一敌人造成 {Damage:diff()} 点伤害，共 4 次。不可自动打出。");
     protected override async Task BurstEffect(PlayerChoiceContext context, CardPlay play) =>
         await DamageCmd.Attack(DynamicVars["Damage"].BaseValue).FromCard(this).Targeting(play.Target!).WithHitCount(4).Execute(context);
+    protected override void OnUpgrade() { DynamicVars["Damage"].UpgradeValueBy(2); }
 }
