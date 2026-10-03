@@ -18,7 +18,7 @@ internal static class CleanupPatch
 {
     [HarmonyPostfix] static void Postfix(CardModel __instance, bool isAutoPlay, ref Task __result)
     {
-        if (!isAutoPlay && (__instance is SignalCard || __instance.Owner.Character is ChaosCharacter))
+        if (__instance is SignalCard || __instance.Owner.Character is ChaosCharacter)
             __result = Cleanup(__result, __instance);
     }
     private static async Task Cleanup(Task task, CardModel card)

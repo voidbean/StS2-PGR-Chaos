@@ -216,6 +216,7 @@ static partial class HyperrealChecks
             check(Attacks.Single() == (26m, 1, null, ValueProp.Move), "finality emits one powered all-enemy attack");
             await RunOathflame(check, player, combat, target, powers, harmony);
             await RunEmpyrea(check, player, combat, target, powers, harmony);
+            await RunExpansion(check, player, combat, target, powers, harmony);
             AccessTools.Method(runtime, "Reset").Invoke(null, null);
         }
         finally { harmony.UnpatchAll(harmony.Id); progress.SetValue(CombatManager.Instance, wasInProgress); }

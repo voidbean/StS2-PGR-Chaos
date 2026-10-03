@@ -15,6 +15,7 @@ internal static class SignalRuntime
     {
         public PlayResolution Resolution { get; } = new();
         public bool Counted { get; set; }
+        public bool PriorTriple { get; set; }
         public bool EffectCompleted { get; set; }
     }
     private static readonly Dictionary<CardModel, Snapshot> Snapshots = [];
@@ -35,6 +36,7 @@ internal static class SignalRuntime
     internal static void Cleanup(CardModel card)
     {
         Snapshots.Remove(card);
+        card.Owner.Creature.GetPower<SignalSupportPower>()?.Cleanup(card);
         if (Pending.TryGetValue(card.Owner, out var pending) && ReferenceEquals(card, pending)) Pending.Remove(card.Owner);
     }
     internal static void Reset() { Snapshots.Clear(); Suppressed.Clear(); Pending.Clear(); RavenRuntime.Reset(); OathflameRuntime.Reset(); }
@@ -56,6 +58,8 @@ internal static class SignalRuntime
             await prayer.AfterSignal(context, card.SignalColor, play);
     }
 
+    internal static bool PriorTriple(CardModel card) => Snapshots.TryGetValue(card, out var snapshot) ? snapshot.PriorTriple : RavenRuntime.Get(card.Owner).Triples > 0;
+
     internal static async Task<int> Resolve(PlayerChoiceContext context, SignalCard card, CardPlay play)
     {
         if (play.IsAutoPlay) return 1;
@@ -70,6 +74,7 @@ internal static class SignalRuntime
         bool firstResolution = !snapshot.Counted;
         if (firstResolution)
         {
+            snapshot.PriorTriple = RavenRuntime.Get(card.Owner).Triples > 0;
             DebugSession.Record(card.Owner, natural ? snapshot.Pair.Length + 1 : 1, resolution.ConsumeSupercompute);
             snapshot.Counted = true;
         }

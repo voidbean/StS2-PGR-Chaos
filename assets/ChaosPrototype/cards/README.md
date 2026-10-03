@@ -45,3 +45,24 @@
 | DeadlineTimer | DeadlineTimer.png | 词条 武器共鸣 死线计时.png |
 | GloriousAfterglow | GloriousAfterglow.png | 词条 武器共鸣 光耀余晖.png |
 | SupercomputeLightning | SupercomputeLightning.png | 词条 武器共鸣 超算闪电.png |
+
+## v0.9.0 灰鸦信号球补齐
+
+| 模型 | 原作图标 | 来源 |
+| --- | --- | --- |
+| ShatteringImpact | 技能 露西亚 鸦羽 黄.png | [Wiki](https://wiki.biligame.com/zspms/%E9%9C%B2%E8%A5%BF%E4%BA%9A%C2%B7%E9%B8%A6%E7%BE%BD) |
+| GlacialCirculation | 技能 露西亚 鸦羽 蓝.png | [Wiki](https://wiki.biligame.com/zspms/%E9%9C%B2%E8%A5%BF%E4%BA%9A%C2%B7%E9%B8%A6%E7%BE%BD) |
+| RadiantDaybreak | 技能 露西亚 誓焰 红.png | [Wiki](https://wiki.biligame.com/zspms/%E9%9C%B2%E8%A5%BF%E4%BA%9A%C2%B7%E8%AA%93%E7%84%B0) |
+| OpeningStance | 技能 露西亚 红莲 红.png | [Wiki](https://wiki.biligame.com/zspms/%E9%9C%B2%E8%A5%BF%E4%BA%9A%C2%B7%E7%BA%A2%E8%8E%B2) |
+| WaveSlash | 技能 露西亚 红莲 蓝.png | [Wiki](https://wiki.biligame.com/zspms/%E9%9C%B2%E8%A5%BF%E4%BA%9A%C2%B7%E7%BA%A2%E8%8E%B2) |
+| TransferCharge | 技能 丽芙 仰光 黄.png | [Wiki](https://wiki.biligame.com/zspms/%E4%B8%BD%E8%8A%99%C2%B7%E4%BB%B0%E5%85%89) |
+| GrayRavenField | 技能 丽芙 仰光 蓝.png | [Wiki](https://wiki.biligame.com/zspms/%E4%B8%BD%E8%8A%99%C2%B7%E4%BB%B0%E5%85%89) |
+| EclipticGrace | 技能 丽芙 极昼 红.png | [Wiki](https://wiki.biligame.com/zspms/%E4%B8%BD%E8%8A%99%C2%B7%E6%9E%81%E6%98%BC) |
+| ExemptionSpace | 技能 丽芙 流光 黄.png | [Wiki](https://wiki.biligame.com/zspms/%E4%B8%BD%E8%8A%99%C2%B7%E6%B5%81%E5%85%89) |
+| FictionalBarrier | 技能 丽芙 流光 蓝.png | [Wiki](https://wiki.biligame.com/zspms/%E4%B8%BD%E8%8A%99%C2%B7%E6%B5%81%E5%85%89) |
+| ContinuousFire | 技能 里 乱数 红.png | [Wiki](https://wiki.biligame.com/zspms/%E9%87%8C%C2%B7%E4%B9%B1%E6%95%B0) |
+| ElectricInduction | 技能 里 乱数 蓝.png | [Wiki](https://wiki.biligame.com/zspms/%E9%87%8C%C2%B7%E4%B9%B1%E6%95%B0) |
+| ShadowManeuver | 技能 里 超刻 黄.png | [Wiki](https://wiki.biligame.com/zspms/%E9%87%8C%C2%B7%E8%B6%85%E5%88%BB) |
+| FallingFire | 技能 里 超刻 蓝.png | [Wiki](https://wiki.biligame.com/zspms/%E9%87%8C%C2%B7%E8%B6%85%E5%88%BB) |
+| PrecisionVolley | 技能 里 异火 红.png | [Wiki](https://wiki.biligame.com/zspms/%E9%87%8C%C2%B7%E5%BC%82%E7%81%AB) |
+| ThermalShot | 技能 里 异火 黄.png | [Wiki](https://wiki.biligame.com/zspms/%E9%87%8C%C2%B7%E5%BC%82%E7%81%AB) |
